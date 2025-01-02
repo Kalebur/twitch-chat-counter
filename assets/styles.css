@@ -1,0 +1,12 @@
+body {
+  background-color: #222;
+  color: #aaa;
+  width: 95vw;
+}
+
+.setting-field {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+  font-size: 1rem;
+}

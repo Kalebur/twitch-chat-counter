@@ -1,0 +1,20 @@
+{
+  "name": "Twitch Chat Counter",
+  "description": "Provides a small badge below the chat input field on twitch.tv that will keep track of the number of chats sent per day.",
+  "version": "0.1",
+  "manifest_version": 3,
+  "action": {
+    "default_popup": "hello.html",
+    "default_icon": "icon.png"
+  },
+  "content_scripts": [
+    {
+      "js": ["scripts/content.js"],
+      "matches": ["https://www.twitch.tv/*"]
+    }
+  ],
+  "permissions": ["tabs"],
+  "background": {
+    "service_worker": "scripts/background.js"
+  }
+}
