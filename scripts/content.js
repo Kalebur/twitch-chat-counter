@@ -1,4 +1,5 @@
 const localChatCountKey = "dailyChatCount";
+const animationDuration = 5;
 const localChatResetTimeKey = "dailyChatResetTime";
 const userToMonitorLocalStorageKey = "userToMonitor";
 const messageCountBadgeId = "messageCountBadge";
@@ -8,6 +9,25 @@ const goalMetAudioLink =
   "https://cdn.discordapp.com/attachments/1090349167890669578/1317579809647493221/newthingget.mp3?ex=67783fd2&is=6776ee52&hm=22b3542107511928d646f43e001a61e8d412bd229b8fea7fa38ddc88f229e3c6&";
 const goalExceededAudioLink =
   "https://cdn.discordapp.com/attachments/1090349167890669578/1317588656394997903/eq-ding.mp3?ex=6778480f&is=6776f68f&hm=441ba7c6e76cc84f114edf33fd60cdaaf212012b5b9478616a2fa01aedeae848&";
+const messageMilestones = [0, 10, 25, 50];
+const milestoneAchievements = {
+  0: {
+    title: "Quota Met",
+    body: "Congrats! You met your daily chat quota!",
+  },
+  10: {
+    title: "Getting Chattier",
+    body: "Look at you, chatting like a pro!",
+  },
+  25: {
+    title: "Actual Chatterbox",
+    body: "You're getting your name out there now! Good on you!",
+  },
+  50: {
+    title: "Lord Spam-A-Lot",
+    body: "You've sent 50 messages today! Can you believe that's almost half as many as you've sent during some entire YEARS?!",
+  },
+};
 
 let userToMonitor = "";
 let messagesSent = getChatMessageCount();
@@ -20,10 +40,12 @@ chrome.runtime.onMessage.addListener(handleMessageReceived);
 
 setTimeout(() => {
   if (getChatArea()) {
+    injectStyles();
     setTargetUser();
     addChatBadgeToPage();
     initializeObserver();
     injectAudioPlayer();
+    initializeAchievementDisplay();
   }
 }, 1000);
 
@@ -147,8 +169,9 @@ async function parseNode(node) {
       updateNotificationElement(chatNotificationElement);
       localStorage.setItem(localChatCountKey, messagesSent.toString());
       playSound();
+      displayAchievementForMessageCount(messagesSent);
+      latestMessageText = node.innerText;
     }
-    latestMessageText = node.innerText;
   }
 }
 
@@ -164,7 +187,6 @@ function isValidMessage(message) {
 }
 
 function playSound() {
-  const messageMilestones = [0, 10, 25, 50];
   const player = document.querySelector(`#${extensionAudioPlayerId}`);
   if (player === null) {
     return;
@@ -187,3 +209,139 @@ function getNotificationStyle() {
     messagesSent >= 0 ? "black" : "white"
   }; padding: 3px 6px; border-radius: 8px; text-align: center; font-weight: bold; cursor: default;`;
 }
+
+// ==================== Achievement Window =====================
+function initializeAchievementDisplay() {
+  const achievementDisplay = createAchievementDisplay();
+  injectElementIntoPage(achievementDisplay);
+}
+
+function createAchievementDisplay() {
+  const achievementDisplay = document.createElement("div");
+  achievementDisplay.classList.add("achievement-display");
+  achievementDisplay.id = "achievement-display";
+
+  const achievementTitle = document.createElement("p");
+  achievementTitle.classList.add("achievement-title");
+  achievementTitle.id = "achievement-title";
+  achievementTitle.innerText = "Achievement Title";
+  achievementDisplay.appendChild(achievementTitle);
+
+  const achievementBody = document.createElement("p");
+  achievementBody.classList.add("achievement-body");
+  achievementBody.id = "achievement-body";
+  achievementBody.innerText = "Achievement Body";
+  achievementDisplay.appendChild(achievementBody);
+
+  return achievementDisplay;
+}
+
+function injectElementIntoPage(element) {
+  const body = document.querySelector(".video-player");
+  body.appendChild(element);
+}
+
+function injectStyles() {
+  const newStyleElement = document.createElement("style");
+  newStyleElement.innerHTML +=
+    achievementBoxClass +
+    " " +
+    achievementTitleClass +
+    " " +
+    achievementBodyClass +
+    " " +
+    animateClass +
+    " " +
+    achievementAnimation;
+  const head = document.querySelector("head");
+  head.appendChild(newStyleElement);
+}
+
+function setAchievementTitle(title) {
+  const titleElem = document.getElementById("achievement-title");
+  titleElem.innerText = title;
+}
+
+function setAchievementBody(body) {
+  const bodyElem = document.getElementById("achievement-body");
+  bodyElem.innerText = body;
+}
+
+function displayAchievementForMessageCount(count) {
+  if (
+    messageMilestones.includes(count) &&
+    milestoneAchievements.hasOwnProperty(count)
+  ) {
+    setAchievementTitle(milestoneAchievements[count].title);
+    setAchievementBody(milestoneAchievements[count].body);
+    playAchievementAnimation();
+  }
+}
+
+function playAchievementAnimation() {
+  const achievementElement = document.getElementById("achievement-display");
+  achievementElement.classList.add("animate");
+  setTimeout(() => {
+    achievementElement.classList.remove("animate");
+  }, animationDuration * 1000);
+}
+
+const achievementBoxClass = `
+  .achievement-display {
+    position: absolute;
+    bottom: -100px;
+    left: 50%;
+    transform: translate(-50%, 0);
+    border-radius: 1rem;
+    width: 50%;
+    height: 100px;
+    min-width: 600px;
+    color: white;
+    background-color: #9147ff;
+    z-index: 1001;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+  }
+    `;
+
+const achievementTitleClass = `
+  .achievement-title {
+    text-align: center;
+    font-weight: 800;
+    font-size: 2rem;
+  }
+`;
+
+const achievementBodyClass = `
+  .achievement-body {
+  text-align: center;
+  font-size: 1.4rem;
+  }
+`;
+
+const animateClass = `
+  .animate {
+    animation: achievement ${animationDuration}s linear infinite;
+  }
+`;
+
+const achievementAnimation = `
+  @keyframes achievement {
+    0% {
+    bottom: -100px;
+    }
+
+    10% {
+      bottom: 25px;
+    }
+
+    90% {
+    bottom: 25px;
+    }
+
+    100% {
+    bottom: -100px;
+    }
+  }
+`;
