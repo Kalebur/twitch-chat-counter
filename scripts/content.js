@@ -4,23 +4,16 @@ const userToMonitorLocalStorageKey = "userToMonitor";
 const messageCountBadgeId = "messageCountBadge";
 const extensionAudioPlayerId = "extensionAudioPlayer";
 const config = { childList: true, subtree: true };
-let userToMonitor = "";
-
 const goalMetAudioLink =
-  "https://cdn.discordapp.com/attachments/1090349167890669578/1317579809647493221/newthingget.mp3?ex=675f3352&is=675de1d2&hm=a40511aaeac2d14b82d36905938579b60265d491013f9b1f22d334de769cc42e&";
+  "https://cdn.discordapp.com/attachments/1090349167890669578/1317579809647493221/newthingget.mp3?ex=67783fd2&is=6776ee52&hm=22b3542107511928d646f43e001a61e8d412bd229b8fea7fa38ddc88f229e3c6&";
 const goalExceededAudioLink =
-  "https://cdn.discordapp.com/attachments/1090349167890669578/1317588656394997903/eq-ding.mp3?ex=675f3b8f&is=675dea0f&hm=506b79babcaf452d7ef4e07a57192b88c454e47845cac4450a1314af67036345&";
+  "https://cdn.discordapp.com/attachments/1090349167890669578/1317588656394997903/eq-ding.mp3?ex=6778480f&is=6776f68f&hm=441ba7c6e76cc84f114edf33fd60cdaaf212012b5b9478616a2fa01aedeae848&";
 
+let userToMonitor = "";
 let messagesSent = getChatMessageCount();
 let chatArea = null;
 let chatNotificationElement = null;
 let latestMessageText = "";
-
-const messageCallback = (mutationList, observer) => {
-  for (const mutation of mutationList) {
-    handleMutation(mutation);
-  }
-};
 
 const observer = new MutationObserver(messageCallback);
 chrome.runtime.onMessage.addListener(handleMessageReceived);
@@ -33,6 +26,12 @@ setTimeout(() => {
     injectAudioPlayer();
   }
 }, 1000);
+
+function messageCallback(mutationList, observer) {
+  for (const mutation of mutationList) {
+    handleMutation(mutation);
+  }
+}
 
 function setTargetUser() {
   userToMonitor = localStorage.getItem(userToMonitorLocalStorageKey);
@@ -133,19 +132,11 @@ function createNotificationElement() {
   return element;
 }
 
-function handleMutation(mutation) {
+async function handleMutation(mutation) {
   if (mutation.type === "childList") {
-    let latestMessage = chatArea.children[chatArea.childElementCount - 1];
-    if (latestMessage === null) {
-      return;
-    }
-    if (latestMessage.innerText !== latestMessageText) {
-      if (
-        !latestMessage.children[0] ||
-        !latestMessage.children[0].hasAttribute("data-a-user")
-      ) {
-        return;
-      }
+    if (mutation.addedNodes.length === 0) return;
+    let latestMessage = mutation.addedNodes[0];
+    if (isValidMessage(latestMessage)) {
       var user = latestMessage.children[0].dataset.aUser;
       if (user === userToMonitor) {
         ++messagesSent;
@@ -156,6 +147,17 @@ function handleMutation(mutation) {
       latestMessageText = latestMessage.innerText;
     }
   }
+}
+
+function isValidMessage(message) {
+  return (
+    message !== null &&
+    message !== undefined &&
+    message.querySelector(".chat-line__timestamp") === null &&
+    message.childElementCount > 0 &&
+    message.children[0].hasAttribute("data-a-user") &&
+    message.innerText !== latestMessageText
+  );
 }
 
 function playSound() {
