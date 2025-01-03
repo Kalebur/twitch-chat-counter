@@ -132,20 +132,23 @@ function createNotificationElement() {
   return element;
 }
 
-async function handleMutation(mutation) {
+function handleMutation(mutation) {
   if (mutation.type === "childList") {
     if (mutation.addedNodes.length === 0) return;
-    let latestMessage = mutation.addedNodes[0];
-    if (isValidMessage(latestMessage)) {
-      var user = latestMessage.children[0].dataset.aUser;
-      if (user === userToMonitor) {
-        ++messagesSent;
-        updateNotificationElement(chatNotificationElement);
-        localStorage.setItem(localChatCountKey, messagesSent.toString());
-        playSound();
-      }
-      latestMessageText = latestMessage.innerText;
+    parseNode(chatArea.children[chatArea.childElementCount - 1]);
+  }
+}
+
+async function parseNode(node) {
+  if (isValidMessage(node)) {
+    var user = node.children[0].dataset.aUser;
+    if (user === userToMonitor) {
+      ++messagesSent;
+      updateNotificationElement(chatNotificationElement);
+      localStorage.setItem(localChatCountKey, messagesSent.toString());
+      playSound();
     }
+    latestMessageText = node.innerText;
   }
 }
 
