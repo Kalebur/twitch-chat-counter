@@ -4,7 +4,7 @@ const localChatResetTimeKey = "dailyChatResetTime";
 const userToMonitorLocalStorageKey = "userToMonitor";
 const messageCountBadgeId = "messageCountBadge";
 const extensionAudioPlayerId = "extensionAudioPlayer";
-const config = { childList: true, subtree: true };
+const config = { childList: true, subtree: false };
 const goalMetAudioLink =
   "https://cdn.discordapp.com/attachments/1090349167890669578/1317579809647493221/newthingget.mp3?ex=67783fd2&is=6776ee52&hm=22b3542107511928d646f43e001a61e8d412bd229b8fea7fa38ddc88f229e3c6&";
 const goalExceededAudioLink =
@@ -157,7 +157,7 @@ function createNotificationElement() {
 function handleMutation(mutation) {
   if (mutation.type === "childList") {
     if (mutation.addedNodes.length === 0) return;
-    parseNode(chatArea.children[chatArea.childElementCount - 1]);
+    parseNode(mutation.addedNodes[0]);
   }
 }
 
