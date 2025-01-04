@@ -48,6 +48,7 @@ setTimeout(() => {
     injectAudioPlayer();
     initializeAchievementDisplay();
     initializeDmBadge();
+    injectDmList();
   }
 }, 1000);
 
@@ -96,6 +97,7 @@ function handleMessageReceived(message, sender, sendResponse) {
         injectAudioPlayer();
         initializeAchievementDisplay();
         initializeDmBadge();
+        injectDmList();
       }, 1000);
       return false;
 
@@ -191,6 +193,7 @@ async function parseNode(node) {
       );
       increaseDmsReceived();
       updateDmBadge();
+      addMessageToDmList(node);
     }
   }
 }
@@ -210,7 +213,7 @@ function updateDmBadge() {
 }
 
 function isMessageDirectedAtMonitoredUser(messageNode) {
-  return messageNode.innerText.toLowerCase().includes(`@${userToMonitor}`);
+  return messageNode.innerText.toLowerCase().includes(`@`);
 }
 
 function isValidMessage(message) {
@@ -281,25 +284,15 @@ function injectElementIntoPage(element, targetElement = null) {
   if (targetElement === null || targetElement === undefined) {
     targetElement = document.querySelector("body");
   }
+  console.log(element);
   targetElement.appendChild(element);
 }
 
 function injectStyles() {
   const newStyleElement = document.createElement("style");
-  newStyleElement.innerHTML +=
-    achievementBoxClass +
-    " " +
-    achievementTitleClass +
-    " " +
-    achievementBodyClass +
-    " " +
-    animateClass +
-    " " +
-    achievementAnimation +
-    " " +
-    dmBadgeClass +
-    " " +
-    displayClass;
+  for (const style of stylesToInject) {
+    newStyleElement.innerHTML += style + " ";
+  }
   const head = document.querySelector("head");
   head.appendChild(newStyleElement);
 }
@@ -401,6 +394,7 @@ function initializeDmBadge() {
     dmBadge.classList.add("dm-badge");
     dmBadge.id = "dm-badge";
     targetElement.children[1].prepend(dmBadge);
+    dmBadge.addEventListener("click", openDmList);
   }
 }
 
@@ -426,6 +420,133 @@ const displayClass = `
   }
 `;
 
+// ==================== Direct Reply List =====================
+function addMessageToDmList(message) {
+  message.querySelector(`[aria-label="Click to reply"]`).remove();
+  const dmList = document.getElementById("dm-container");
+  message.style = "position: relative; color: white; font-weight: 600;";
+  const deleteButton = document.createElement("button");
+  deleteButton.classList.add("btn-delete-msg");
+  deleteButton.onclick = () => deleteMessage(dmList, message);
+  deleteButton.innerText = "X";
+  message.appendChild(deleteButton);
+  dmList.appendChild(message);
+}
+
+function deleteMessage(dmList, message) {
+  message.remove();
+  --numDmsReceived;
+  updateDmBadge();
+}
+
+function injectDmList() {
+  const dmList = createDmList();
+  injectElementIntoPage(dmList);
+}
+
+function createDmList() {
+  const dmList = document.createElement("dialog");
+  dmList.id = "dm-list";
+  dmList.classList.add("dm-list");
+  const dmContainer = document.createElement("div");
+  dmContainer.id = "dm-container";
+  dmContainer.classList.add("dm-container");
+  dmList.appendChild(dmContainer);
+  const closeDmListButton = document.createElement("button");
+  closeDmListButton.innerText = "X";
+  closeDmListButton.id = "btn-close-dm-list";
+  closeDmListButton.classList.add("btn-close-dm-list");
+  closeDmListButton.addEventListener("click", closeDmList);
+  dmList.appendChild(closeDmListButton);
+  return dmList;
+}
+
+function openDmList() {
+  const dmList = document.getElementById("dm-list");
+  dmList.showModal();
+  dmList.querySelector("#btn-close-dm-list").focus();
+}
+
+function closeDmList() {
+  document.getElementById("dm-list").close();
+}
+
+const dmListClass = `
+  .dm-list {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    border: none;
+    padding: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-color: transparent;
+    box-sizing: border-box;
+  }
+
+  dialog:not([open]) {
+    display: none;
+  }
+
+  ::backdrop {
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+`;
+
+const dmContainerClass = `
+  .dm-container {
+    display: flex;
+    flex-direction: column;
+    width: 75vw;
+    height: 80vh;
+    max-width: 90%;
+    padding: 1rem;
+    background-color: rgba(88, 22, 88, 0.6);
+    border-radius: 8px;
+    overflow-y: auto;
+  }
+`;
+
+const dmListCloseButtonClass = `
+  .btn-close-dm-list {
+    position: absolute;
+    top: 25px;
+    right: 25px;
+    border-radius: 50%;
+    background-color: darkred;
+    color: white;
+    font-size: 1.2rem;
+    width: 50px;
+    height: 50px;
+    padding: 10px;
+    text-align: center;
+    vertical-align: middle;
+    background-color:
+  }
+`;
+
+const msgDeleteButtonClass = `
+  .btn-delete-msg {
+    background-color: darkred;
+    color: white;
+    font-weight: 900;
+    font-size: 1.25rem;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 25px;
+    height: 25px;
+    border-radius: 8px;
+    text-align: center;
+  }
+`;
+
 // ==================== Bonus Point Auto-Clicker =====================
 function claimBonusPoints() {
   const pointsButton = document.querySelector(`[aria-label = "Claim Bonus"]`);
@@ -433,3 +554,17 @@ function claimBonusPoints() {
     pointsButton.click();
   }
 }
+
+const stylesToInject = [
+  achievementBoxClass,
+  achievementBodyClass,
+  achievementTitleClass,
+  animateClass,
+  achievementAnimation,
+  dmBadgeClass,
+  displayClass,
+  dmListClass,
+  dmContainerClass,
+  dmListCloseButtonClass,
+  msgDeleteButtonClass,
+];
