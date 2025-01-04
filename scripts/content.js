@@ -1,7 +1,6 @@
 const localChatCountKey = "dailyChatCount";
 const animationDuration = 5;
 const localChatResetTimeKey = "dailyChatResetTime";
-const userToMonitorLocalStorageKey = "userToMonitor";
 const messageCountBadgeId = "messageCountBadge";
 const extensionAudioPlayerId = "extensionAudioPlayer";
 const config = { childList: true, subtree: false };
@@ -29,7 +28,6 @@ const milestoneAchievements = {
   },
 };
 
-let userToMonitor = "";
 let messagesSent = getChatMessageCount();
 let chatArea = null;
 let chatNotificationElement = null;
@@ -41,8 +39,8 @@ chrome.runtime.onMessage.addListener(handleMessageReceived);
 
 setTimeout(() => {
   if (getChatArea()) {
-    injectStyles();
-    setTargetUser();
+    injectStyles(appStyles, document.querySelector("head"));
+    setMonitoredUser();
     addChatBadgeToPage();
     initializeObserver();
     injectAudioPlayer();
@@ -62,14 +60,6 @@ function messageCallback(mutationList, observer) {
   }
 }
 
-function setTargetUser() {
-  userToMonitor = localStorage.getItem(userToMonitorLocalStorageKey);
-  if (userToMonitor === null) {
-    userToMonitor = prompt("What is your twitch handle?");
-    localStorage.setItem(userToMonitorLocalStorageKey, userToMonitor);
-  }
-}
-
 function initializeObserver() {
   chatArea = getChatArea();
   observer.observe(chatArea, config);
@@ -79,8 +69,7 @@ function injectAudioPlayer() {
   const player = document.createElement("audio");
   player.id = extensionAudioPlayerId;
   player.src = goalMetAudioLink;
-  player.style =
-    "width: 1px; height: 1px; position: absolute; top: 0; left: -1px;";
+  player.classList.add("extension-audio-player");
   document.querySelector("body").appendChild(player);
 }
 
@@ -90,7 +79,7 @@ function handleMessageReceived(message, sender, sendResponse) {
       setTimeout(() => {
         observer.disconnect();
         messagesSent = getChatMessageCount();
-        injectStyles();
+        injectStyles(appStyles, document.querySelector("head"));
         addChatBadgeToPage(chatArea);
         updateNotificationElement(chatNotificationElement);
         initializeObserver();
@@ -158,12 +147,16 @@ function getChatArea() {
 
 function updateNotificationElement(element) {
   element.innerText = messagesSent;
-  element.setAttribute("style", getNotificationStyle());
+  element.classList.add(getNotificationStyle());
 }
 
 function createNotificationElement() {
   const element = document.createElement("p");
-  element.setAttribute("style", getNotificationStyle());
+  element.classList.add(
+    "extension-badge",
+    "default-cursor",
+    getNotificationStyle()
+  );
   element.innerText = messagesSent;
   element.id = messageCountBadgeId;
   return element;
@@ -187,10 +180,7 @@ async function parseNode(node) {
       displayAchievementForMessageCount(messagesSent);
       latestMessageText = node.innerText;
     } else if (isMessageDirectedAtMonitoredUser(node)) {
-      node.setAttribute(
-        "style",
-        "background-color: darkred; font-weight: 600;"
-      );
+      node.classList.add("msg-highlighted");
       increaseDmsReceived();
       updateDmBadge();
       addMessageToDmList(node);
@@ -244,11 +234,13 @@ function playSound() {
 }
 
 function getNotificationStyle() {
-  return `background-color: ${
-    messagesSent >= 0 ? (messagesSent >= 25 ? "gold" : "#00DC85") : "darkred"
-  }; color: ${
-    messagesSent >= 0 ? "black" : "white"
-  }; padding: 3px 6px; border-radius: 8px; text-align: center; font-weight: bold; cursor: default;`;
+  if (messagesSent >= 25) {
+    return "quota-exceeded";
+  } else if (messagesSent >= 0 && messagesSent < 25) {
+    return "quota-met";
+  } else {
+    return "quota-not-met";
+  }
 }
 
 // ==================== Achievement Window =====================
@@ -286,15 +278,6 @@ function injectElementIntoPage(element, targetElement = null) {
   }
   console.log(element);
   targetElement.appendChild(element);
-}
-
-function injectStyles() {
-  const newStyleElement = document.createElement("style");
-  for (const style of stylesToInject) {
-    newStyleElement.innerHTML += style + " ";
-  }
-  const head = document.querySelector("head");
-  head.appendChild(newStyleElement);
 }
 
 function setAchievementTitle(title) {

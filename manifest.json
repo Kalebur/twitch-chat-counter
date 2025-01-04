@@ -9,7 +9,12 @@
   },
   "content_scripts": [
     {
-      "js": ["scripts/content.js"],
+      "js": [
+        "scripts/appStyles.js",
+        "scripts/styleInjector.js",
+        "scripts/userManager.js",
+        "scripts/content.js"
+      ],
       "matches": ["https://www.twitch.tv/*"]
     }
   ],
