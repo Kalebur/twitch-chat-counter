@@ -213,7 +213,7 @@ function updateDmBadge() {
 }
 
 function isMessageDirectedAtMonitoredUser(messageNode) {
-  return messageNode.innerText.toLowerCase().includes(`@`);
+  return messageNode.innerText.toLowerCase().includes(`@${userToMonitor}`);
 }
 
 function isValidMessage(message) {
@@ -423,17 +423,69 @@ const displayClass = `
 // ==================== Direct Reply List =====================
 function addMessageToDmList(message) {
   message.querySelector(`[aria-label="Click to reply"]`).remove();
+  const parsedMessage = parseMessageToNewElement(message);
   const dmList = document.getElementById("dm-container");
-  message.style = "position: relative; color: white; font-weight: 600;";
   const deleteButton = document.createElement("button");
   deleteButton.classList.add("btn-delete-msg");
-  deleteButton.onclick = () => deleteMessage(dmList, message);
+  deleteButton.onclick = () => deleteMessage(parsedMessage);
   deleteButton.innerText = "X";
-  message.appendChild(deleteButton);
-  dmList.appendChild(message);
+  parsedMessage.appendChild(deleteButton);
+  dmList.appendChild(parsedMessage);
 }
 
-function deleteMessage(dmList, message) {
+function parseMessageToNewElement(message) {
+  const newMessage = document.createElement("div");
+  newMessage.classList.add("direct-chat");
+  if (containsReply(message)) {
+    newMessage.appendChild(createReplyElement(message));
+  }
+  newMessage.appendChild(createMessageFromNode(message));
+  return newMessage;
+}
+
+function containsReply(message) {
+  return message.querySelector("p");
+}
+
+function createReplyElement(message) {
+  const originalMessageText = document.createElement("p");
+  originalMessageText.classList.add("reply-text");
+  originalMessageText.innerText = message.querySelector("p").innerText;
+  return originalMessageText;
+}
+
+function createMessageFromNode(messageNode) {
+  const newMessage = document.createElement("p");
+  newMessage.classList.add("new-message");
+
+  const senderName = getSenderName(messageNode);
+  const messageBody = getMessageBody(messageNode);
+  newMessage.appendChild(senderName);
+  newMessage.appendChild(messageBody);
+  return newMessage;
+}
+
+function getSenderName(messageNode) {
+  const newSenderName = document.createElement("span");
+  const senderElem = messageNode.querySelector(".chat-author__display-name");
+  newSenderName.innerText = senderElem.innerText;
+  newSenderName.style = senderElem.getAttribute("style");
+  return newSenderName;
+}
+
+function getMessageBody(messageNode) {
+  const newMessageBody = document.createElement("span");
+  const messageElem = messageNode.querySelectorAll("span");
+  for (const span of messageElem) {
+    if (span.dataset.aTarget === "chat-line-message-body") {
+      newMessageBody.innerText = span.innerText;
+      break;
+    }
+  }
+  return newMessageBody;
+}
+
+function deleteMessage(message) {
   message.remove();
   --numDmsReceived;
   updateDmBadge();
@@ -501,8 +553,6 @@ const dmListClass = `
 
 const dmContainerClass = `
   .dm-container {
-    display: flex;
-    flex-direction: column;
     width: 75vw;
     height: 80vh;
     max-width: 90%;
@@ -539,11 +589,47 @@ const msgDeleteButtonClass = `
     font-size: 1.25rem;
     position: absolute;
     top: 0;
-    right: 0;
+    right: 5px;
     width: 25px;
     height: 25px;
-    border-radius: 8px;
+    border-radius: 25%;
     text-align: center;
+  }
+`;
+
+const directChatClass = `
+  .direct-chat {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    color: white;
+    border-radius: 8px;
+    padding: 4px 8px;
+    min-height: 50px;
+    min-width: 100%;
+    background-color: rgba(0, 0, 0, 0.75);
+    margin-bottom: 0.5rem;
+  }
+
+  .direct-chat:hover {
+    background-color: rgba(128, 128, 128, 0.5);
+  }
+`;
+
+const replyTextClass = `
+  .reply-text {
+    font-style: italic;
+  }
+`;
+
+const newMessageClass = `
+  .new-message {
+    font-weight: 800;
+  }
+
+  .new-message span:first-of-type {
+    display: inline-block;
+    margin-right: 6px;
   }
 `;
 
@@ -567,4 +653,7 @@ const stylesToInject = [
   dmContainerClass,
   dmListCloseButtonClass,
   msgDeleteButtonClass,
+  directChatClass,
+  replyTextClass,
+  newMessageClass,
 ];
