@@ -34,6 +34,7 @@ let messagesSent = getChatMessageCount();
 let chatArea = null;
 let chatNotificationElement = null;
 let latestMessageText = "";
+let numDmsReceived = 0;
 
 const observer = new MutationObserver(messageCallback);
 chrome.runtime.onMessage.addListener(handleMessageReceived);
@@ -46,6 +47,7 @@ setTimeout(() => {
     initializeObserver();
     injectAudioPlayer();
     initializeAchievementDisplay();
+    initializeDmBadge();
   }
 }, 1000);
 
@@ -83,10 +85,13 @@ function handleMessageReceived(message, sender, sendResponse) {
       setTimeout(() => {
         observer.disconnect();
         messagesSent = getChatMessageCount();
+        injectStyles();
         addChatBadgeToPage(chatArea);
         updateNotificationElement(chatNotificationElement);
         initializeObserver();
         injectAudioPlayer();
+        initializeAchievementDisplay();
+        initializeDmBadge();
       }, 1000);
       return false;
 
@@ -96,6 +101,10 @@ function handleMessageReceived(message, sender, sendResponse) {
         messagesSent = getChatMessageCount();
         updateNotificationElement(badge);
       }
+      return false;
+
+    case "newReplyReceivedInNonActiveTab":
+      console.log("Message received!");
       return false;
 
     default:
@@ -163,7 +172,7 @@ function handleMutation(mutation) {
 
 async function parseNode(node) {
   if (isValidMessage(node)) {
-    var user = node.children[0].dataset.aUser;
+    let user = node.children[0].dataset.aUser;
     if (user === userToMonitor) {
       ++messagesSent;
       updateNotificationElement(chatNotificationElement);
@@ -171,8 +180,33 @@ async function parseNode(node) {
       playSound();
       displayAchievementForMessageCount(messagesSent);
       latestMessageText = node.innerText;
+    } else if (isMessageDirectedAtMonitoredUser(node)) {
+      node.setAttribute(
+        "style",
+        "background-color: darkred; font-weight: 600;"
+      );
+      increaseDmsReceived();
+      updateDmBadge();
     }
   }
+}
+
+function increaseDmsReceived() {
+  ++numDmsReceived;
+}
+
+function updateDmBadge() {
+  const dmBadge = document.getElementById("dm-badge");
+  if (numDmsReceived > 0) {
+    dmBadge.classList.add("displayed");
+  } else {
+    dmBadge.classList.remove("displayed");
+  }
+  dmBadge.innerText = numDmsReceived;
+}
+
+function isMessageDirectedAtMonitoredUser(messageNode) {
+  return messageNode.innerText.toLowerCase().includes(`@${userToMonitor}`);
 }
 
 function isValidMessage(message) {
@@ -213,7 +247,10 @@ function getNotificationStyle() {
 // ==================== Achievement Window =====================
 function initializeAchievementDisplay() {
   const achievementDisplay = createAchievementDisplay();
-  injectElementIntoPage(achievementDisplay);
+  injectElementIntoPage(
+    achievementDisplay,
+    document.querySelector(".video-player")
+  );
 }
 
 function createAchievementDisplay() {
@@ -236,9 +273,11 @@ function createAchievementDisplay() {
   return achievementDisplay;
 }
 
-function injectElementIntoPage(element) {
-  const body = document.querySelector(".video-player");
-  body.appendChild(element);
+function injectElementIntoPage(element, targetElement = null) {
+  if (targetElement === null || targetElement === undefined) {
+    targetElement = document.querySelector("body");
+  }
+  targetElement.appendChild(element);
 }
 
 function injectStyles() {
@@ -252,7 +291,11 @@ function injectStyles() {
     " " +
     animateClass +
     " " +
-    achievementAnimation;
+    achievementAnimation +
+    " " +
+    dmBadgeClass +
+    " " +
+    displayClass;
   const head = document.querySelector("head");
   head.appendChild(newStyleElement);
 }
@@ -343,5 +386,38 @@ const achievementAnimation = `
     100% {
     bottom: -100px;
     }
+  }
+`;
+
+// ==================== Direct Reply Badge =====================
+function initializeDmBadge() {
+  let targetElement = document.querySelector(".chat-input__buttons-container");
+  if (targetElement !== null) {
+    const dmBadge = document.createElement("p");
+    dmBadge.classList.add("dm-badge");
+    dmBadge.id = "dm-badge";
+    targetElement.children[1].prepend(dmBadge);
+  }
+}
+
+const dmBadgeClass = `
+  .dm-badge {
+    padding: 3px 6px;
+    border-radius: 3px;
+    width: 25px;
+    height: 25px;
+    text-align: center;
+    margin-right: 3px;
+    cursor: pointer;
+    background-color: red;
+    color: white;
+    font-weight: 600;
+    display: none;
+  }
+`;
+
+const displayClass = `
+  .displayed {
+    display: block;
   }
 `;
