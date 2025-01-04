@@ -51,6 +51,10 @@ setTimeout(() => {
   }
 }, 1000);
 
+const autoBonusClicker = setInterval(() => {
+  claimBonusPoints();
+}, 300000);
+
 function messageCallback(mutationList, observer) {
   for (const mutation of mutationList) {
     handleMutation(mutation);
@@ -421,3 +425,11 @@ const displayClass = `
     display: block;
   }
 `;
+
+// ==================== Bonus Point Auto-Clicker =====================
+function claimBonusPoints() {
+  const pointsButton = document.querySelector(`[aria-label = "Claim Bonus"]`);
+  if (pointsButton) {
+    pointsButton.click();
+  }
+}
