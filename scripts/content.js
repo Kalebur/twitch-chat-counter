@@ -1,4 +1,3 @@
-const animationDuration = 5;
 const messageMilestones = [0, 10, 25, 50];
 const milestoneAchievements = {
   0: {
@@ -147,66 +146,6 @@ function playAchievementAnimation() {
   }, animationDuration * 1000);
 }
 
-const achievementBoxClass = `
-  .achievement-display {
-    position: absolute;
-    bottom: -100px;
-    left: 50%;
-    transform: translate(-50%, 0);
-    border-radius: 1rem;
-    width: 50%;
-    height: 100px;
-    min-width: 600px;
-    color: white;
-    background-color: #9147ff;
-    z-index: 1001;
-    display: flex;
-    flex-direction: column;
-    padding: 1rem;
-  }
-    `;
-
-const achievementTitleClass = `
-  .achievement-title {
-    text-align: center;
-    font-weight: 800;
-    font-size: 2rem;
-  }
-`;
-
-const achievementBodyClass = `
-  .achievement-body {
-  text-align: center;
-  font-size: 1.4rem;
-  }
-`;
-
-const animateClass = `
-  .animate {
-    animation: achievement ${animationDuration}s linear infinite;
-  }
-`;
-
-const achievementAnimation = `
-  @keyframes achievement {
-    0% {
-    bottom: -100px;
-    }
-
-    10% {
-      bottom: 25px;
-    }
-
-    90% {
-    bottom: 25px;
-    }
-
-    100% {
-    bottom: -100px;
-    }
-  }
-`;
-
 // ==================== Direct Reply Badge =====================
 function initializeDmBadge() {
   let targetElement = document.querySelector(".chat-input__buttons-container");
@@ -218,22 +157,6 @@ function initializeDmBadge() {
     dmBadge.addEventListener("click", openDmList);
   }
 }
-
-const dmBadgeClass = `
-  .dm-badge {
-    padding: 3px 6px;
-    border-radius: 3px;
-    width: 25px;
-    height: 25px;
-    text-align: center;
-    margin-right: 3px;
-    cursor: pointer;
-    background-color: red;
-    color: white;
-    font-weight: 600;
-    display: none;
-  }
-`;
 
 // ==================== Direct Reply List =====================
 function addMessageToDmList(message) {
@@ -338,116 +261,6 @@ function closeDmList() {
   document.getElementById("dm-list").close();
 }
 
-const dmListClass = `
-  .dm-list {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100vw;
-    height: 100vh;
-    margin: 0;
-    border: none;
-    padding: 0;
-    position: absolute;
-    left: 0;
-    top: 0;
-    background-color: transparent;
-    box-sizing: border-box;
-  }
-
-  dialog:not([open]) {
-    display: none;
-  }
-
-  ::backdrop {
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.8);
-  }
-`;
-
-const dmContainerClass = `
-  .dm-container {
-    width: 75vw;
-    height: 80vh;
-    max-width: 90%;
-    padding: 1rem;
-    background-color: rgba(88, 22, 88, 0.6);
-    border-radius: 8px;
-    overflow-y: auto;
-  }
-`;
-
-const dmListCloseButtonClass = `
-  .btn-close-dm-list {
-    position: absolute;
-    top: 25px;
-    right: 25px;
-    border-radius: 50%;
-    background-color: darkred;
-    color: white;
-    font-size: 1.2rem;
-    width: 50px;
-    height: 50px;
-    padding: 10px;
-    text-align: center;
-    vertical-align: middle;
-    background-color:
-  }
-`;
-
-const msgDeleteButtonClass = `
-  .btn-delete-msg {
-    background-color: darkred;
-    color: white;
-    font-weight: 900;
-    font-size: 1.25rem;
-    position: absolute;
-    top: 0;
-    right: 5px;
-    width: 25px;
-    height: 25px;
-    border-radius: 25%;
-    text-align: center;
-  }
-`;
-
-const directChatClass = `
-  .direct-chat {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    color: white;
-    border-radius: 8px;
-    padding: 4px 8px;
-    min-height: 50px;
-    min-width: 100%;
-    background-color: rgba(0, 0, 0, 0.75);
-    margin-bottom: 0.5rem;
-  }
-
-  .direct-chat:hover {
-    background-color: rgba(128, 128, 128, 0.5);
-  }
-`;
-
-const replyTextClass = `
-  .reply-text {
-    font-style: italic;
-  }
-`;
-
-const newMessageClass = `
-  .new-message {
-    font-weight: 800;
-  }
-
-  .new-message span:first-of-type {
-    display: inline-block;
-    margin-right: 6px;
-  }
-`;
-
 // ==================== Bonus Point Auto-Clicker =====================
 function claimBonusPoints() {
   const pointsButton = document.querySelector(`[aria-label = "Claim Bonus"]`);
@@ -455,19 +268,3 @@ function claimBonusPoints() {
     pointsButton.click();
   }
 }
-
-const stylesToInject = [
-  achievementBoxClass,
-  achievementBodyClass,
-  achievementTitleClass,
-  animateClass,
-  achievementAnimation,
-  dmBadgeClass,
-  dmListClass,
-  dmContainerClass,
-  dmListCloseButtonClass,
-  msgDeleteButtonClass,
-  directChatClass,
-  replyTextClass,
-  newMessageClass,
-];
