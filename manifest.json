@@ -14,6 +14,8 @@
         "scripts/styleInjector.js",
         "scripts/userManager.js",
         "scripts/audioPlayer.js",
+        "scripts/chatCounter.js",
+        "scripts/messageParser.js",
         "scripts/content.js"
       ],
       "matches": ["https://www.twitch.tv/*"]

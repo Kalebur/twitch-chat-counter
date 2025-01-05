@@ -30,7 +30,7 @@ const appStyles = {
   quotaExceeded: `
         .quota-exceeded {
             background-color: gold;
-            color: white;
+            color: black;
         }
     `,
   quotaMet: `
@@ -43,6 +43,11 @@ const appStyles = {
         .quota-not-met {
             background-color: darkred;
             color: white;
+        }
+    `,
+  displayed: `
+        .displayed {
+            display: block;
         }
     `,
 };

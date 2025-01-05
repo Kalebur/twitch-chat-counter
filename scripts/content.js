@@ -1,8 +1,4 @@
-const localChatCountKey = "dailyChatCount";
 const animationDuration = 5;
-const localChatResetTimeKey = "dailyChatResetTime";
-const messageCountBadgeId = "messageCountBadge";
-const config = { childList: true, subtree: false };
 const messageMilestones = [0, 10, 25, 50];
 const milestoneAchievements = {
   0: {
@@ -23,58 +19,36 @@ const milestoneAchievements = {
   },
 };
 
-let messagesSent = getChatMessageCount();
-let chatArea = null;
-let chatNotificationElement = null;
-let latestMessageText = "";
 let numDmsReceived = 0;
 
-const observer = new MutationObserver(messageCallback);
 chrome.runtime.onMessage.addListener(handleMessageReceived);
+initializeExtension();
 
-setTimeout(() => {
-  if (getChatArea()) {
-    injectStyles(appStyles, document.querySelector("head"));
-    setMonitoredUser();
-    addChatBadgeToPage();
-    initializeObserver();
-    injectAudioPlayer();
-    initializeAchievementDisplay();
-    initializeDmBadge();
-    injectDmList();
-  }
-}, 1000);
+function initializeExtension() {
+  setTimeout(() => {
+    if (getChatArea()) {
+      observer.disconnect();
+      messagesSent = getChatMessageCount();
+      injectStyles(appStyles, document.querySelector("head"));
+      setMonitoredUser();
+      addChatBadgeToPage();
+      initializeObserver(getChatArea());
+      injectAudioPlayer();
+      initializeAchievementDisplay();
+      initializeDmBadge();
+      injectDmList();
+    }
+  }, 1000);
+}
 
 const autoBonusClicker = setInterval(() => {
   claimBonusPoints();
 }, 300000);
 
-function messageCallback(mutationList, observer) {
-  for (const mutation of mutationList) {
-    handleMutation(mutation);
-  }
-}
-
-function initializeObserver() {
-  chatArea = getChatArea();
-  observer.observe(chatArea, config);
-}
-
 function handleMessageReceived(message, sender, sendResponse) {
   switch (message) {
     case "injectCountBadge":
-      setTimeout(() => {
-        observer.disconnect();
-        messagesSent = getChatMessageCount();
-        injectStyles(appStyles, document.querySelector("head"));
-        addChatBadgeToPage(chatArea);
-        updateNotificationElement(chatNotificationElement);
-        initializeObserver();
-        injectAudioPlayer();
-        initializeAchievementDisplay();
-        initializeDmBadge();
-        injectDmList();
-      }, 1000);
+      initializeExtension();
       return false;
 
     case "updateCount":
@@ -94,87 +68,6 @@ function handleMessageReceived(message, sender, sendResponse) {
   }
 }
 
-function addChatBadgeToPage() {
-  let targetElement = document.querySelector(".chat-input__buttons-container");
-  if (targetElement !== null) {
-    let chatBadge = document.getElementById(messageCountBadgeId);
-    if (chatBadge !== null) {
-      return;
-    }
-    chatNotificationElement = createNotificationElement();
-    targetElement.children[1].prepend(chatNotificationElement);
-  } else {
-    setTimeout(() => addChatBadgeToPage(targetElement), 1000);
-  }
-}
-
-function getChatMessageCount() {
-  let currentDate = new Date();
-  let storedTime = localStorage.getItem(localChatResetTimeKey);
-  let resetDate = new Date(storedTime);
-
-  if (resetDate.getHours() !== 6) {
-    resetDate.setHours(6, 0, 0, 0);
-    localStorage.setItem(localChatResetTimeKey, resetDate.toISOString());
-  }
-
-  if (currentDate > resetDate) {
-    resetDate.setDate(resetDate.getDate() + 1);
-    localStorage.setItem(localChatResetTimeKey, resetDate.toISOString());
-    localStorage.setItem(localChatCountKey, -5);
-    return -5;
-  }
-
-  return parseInt(localStorage.getItem(localChatCountKey)) ?? -5;
-}
-
-function getChatArea() {
-  return document.querySelector(".chat-scrollable-area__message-container");
-}
-
-function updateNotificationElement(element) {
-  element.innerText = messagesSent;
-  element.classList.add(getNotificationStyle());
-}
-
-function createNotificationElement() {
-  const element = document.createElement("p");
-  element.classList.add(
-    "extension-badge",
-    "default-cursor",
-    getNotificationStyle()
-  );
-  element.innerText = messagesSent;
-  element.id = messageCountBadgeId;
-  return element;
-}
-
-function handleMutation(mutation) {
-  if (mutation.type === "childList") {
-    if (mutation.addedNodes.length === 0) return;
-    parseNode(mutation.addedNodes[0]);
-  }
-}
-
-async function parseNode(node) {
-  if (isValidMessage(node)) {
-    let user = node.children[0].dataset.aUser;
-    if (user === userToMonitor) {
-      ++messagesSent;
-      updateNotificationElement(chatNotificationElement);
-      localStorage.setItem(localChatCountKey, messagesSent.toString());
-      playSound();
-      displayAchievementForMessageCount(messagesSent);
-      latestMessageText = node.innerText;
-    } else if (isMessageDirectedAtMonitoredUser(node)) {
-      node.classList.add("msg-highlighted");
-      increaseDmsReceived();
-      updateDmBadge();
-      addMessageToDmList(node);
-    }
-  }
-}
-
 function increaseDmsReceived() {
   ++numDmsReceived;
 }
@@ -187,31 +80,6 @@ function updateDmBadge() {
     dmBadge.classList.remove("displayed");
   }
   dmBadge.innerText = numDmsReceived;
-}
-
-function isMessageDirectedAtMonitoredUser(messageNode) {
-  return messageNode.innerText.toLowerCase().includes(`@${userToMonitor}`);
-}
-
-function isValidMessage(message) {
-  return (
-    message !== null &&
-    message !== undefined &&
-    message.querySelector(".chat-line__timestamp") === null &&
-    message.childElementCount > 0 &&
-    message.children[0].hasAttribute("data-a-user") &&
-    message.innerText !== latestMessageText
-  );
-}
-
-function getNotificationStyle() {
-  if (messagesSent >= 25) {
-    return "quota-exceeded";
-  } else if (messagesSent >= 0 && messagesSent < 25) {
-    return "quota-met";
-  } else {
-    return "quota-not-met";
-  }
 }
 
 // ==================== Achievement Window =====================
@@ -247,7 +115,6 @@ function injectElementIntoPage(element, targetElement = null) {
   if (targetElement === null || targetElement === undefined) {
     targetElement = document.querySelector("body");
   }
-  console.log(element);
   targetElement.appendChild(element);
 }
 
@@ -365,12 +232,6 @@ const dmBadgeClass = `
     color: white;
     font-weight: 600;
     display: none;
-  }
-`;
-
-const displayClass = `
-  .displayed {
-    display: block;
   }
 `;
 
@@ -602,7 +463,6 @@ const stylesToInject = [
   animateClass,
   achievementAnimation,
   dmBadgeClass,
-  displayClass,
   dmListClass,
   dmContainerClass,
   dmListCloseButtonClass,
