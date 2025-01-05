@@ -15,6 +15,7 @@
         "scripts/userManager.js",
         "scripts/audioPlayer.js",
         "scripts/chatCounter.js",
+        "scripts/achievements.js",
         "scripts/messageParser.js",
         "scripts/content.js"
       ],

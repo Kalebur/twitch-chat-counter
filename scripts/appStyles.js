@@ -49,7 +49,7 @@ const appStyles = {
     `,
   displayed: `
         .displayed {
-            display: block !important;
+            display: block;
         }
     `,
   achievementDisplay: `
@@ -115,6 +115,10 @@ const appStyles = {
         color: white;
         font-weight: 600;
         display: none;
+    }
+
+    .dm-badge.displayed {
+        display: block;
     }`,
   dmList: `
     .dm-list {
@@ -160,7 +164,7 @@ const appStyles = {
         border-radius: 50%;
         background-color: darkred;
         color: white;
-        font-size: 1.2rem;
+        font-size: 2rem;
         width: 50px;
         height: 50px;
         padding: 10px;
