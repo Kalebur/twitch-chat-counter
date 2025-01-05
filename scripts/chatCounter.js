@@ -1,6 +1,7 @@
 const localChatCountKey = "dailyChatCount";
 const localChatResetTimeKey = "dailyChatResetTime";
 const messageCountBadgeId = "messageCountBadge";
+const messageMilestones = [0, 10, 25, 50];
 
 let messagesSent = getChatMessageCount();
 let chatArea = getChatArea();

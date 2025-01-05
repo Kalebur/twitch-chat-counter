@@ -1,3 +1,22 @@
+const milestoneAchievements = {
+  0: {
+    title: "Quota Met",
+    body: "Congrats! You met your daily chat quota!",
+  },
+  10: {
+    title: "Getting Chattier",
+    body: "Look at you, chatting like a pro!",
+  },
+  25: {
+    title: "Actual Chatterbox",
+    body: "You're getting your name out there now! Good on you!",
+  },
+  50: {
+    title: "Lord Spam-A-Lot",
+    body: "You've sent 50 messages today! Can you believe that's almost half as many as you've sent during some entire YEARS?!",
+  },
+};
+
 function initializeAchievementDisplay() {
   const achievementDisplay = createAchievementDisplay();
   injectElementIntoPage(

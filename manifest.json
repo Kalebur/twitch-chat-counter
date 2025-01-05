@@ -16,7 +16,10 @@
         "scripts/audioPlayer.js",
         "scripts/chatCounter.js",
         "scripts/achievements.js",
+        "scripts/directMessages.js",
+        "scripts/bonusPointsClicker.js",
         "scripts/messageParser.js",
+        "scripts/contentRuntimeMessageHandler.js",
         "scripts/content.js"
       ],
       "matches": ["https://www.twitch.tv/*"]
