@@ -49,5 +49,5 @@ function isValidMessage(message) {
 }
 
 function isMessageDirectedAtMonitoredUser(messageNode) {
-  return messageNode.innerText.toLowerCase().includes(`@`);
+  return messageNode.innerText.toLowerCase().includes(`@${userToMonitor}`);
 }
