@@ -25,7 +25,8 @@ function addChatBadgeToPage() {
 
 function getChatMessageCount() {
   let currentDate = new Date();
-  let storedTime = localStorage.getItem(localChatResetTimeKey);
+  let storedTime =
+    localStorage.getItem(localChatResetTimeKey) ?? new Date(2000, 1, 1);
   let resetDate = new Date(storedTime);
 
   if (resetDate.getHours() !== 6) {
