@@ -22,19 +22,38 @@ async function parseNode(node) {
   if (isValidMessage(node)) {
     let user = node.children[0].dataset.aUser;
     if (user === userToMonitor) {
-      ++messagesSent;
-      updateNotificationElement(chatNotificationElement);
-      localStorage.setItem(localChatCountKey, messagesSent.toString());
-      playSound();
-      displayAchievementForMessageCount(messagesSent);
-      latestMessageText = node.innerText;
+      handleUserMessage(node);
     } else if (isMessageDirectedAtMonitoredUser(node)) {
-      node.classList.add("msg-highlighted");
-      increaseDmsReceived();
-      updateDmBadge();
-      addMessageToDmList(node);
+      handleDm(node);
     }
   }
+}
+
+function handleUserMessage(message) {
+  increaseMessagesSent();
+  playSound();
+  displayAchievementForMessageCount(messagesSent);
+  latestMessageText = message.innerText;
+  if (messagesSent === 0) {
+    increaseMessagesSent(quota);
+  }
+}
+
+function handleDm(dm) {
+  dm.classList.add("msg-highlighted");
+  increaseDmsReceived();
+  updateDmBadge();
+  addMessageToDmList(dm);
+}
+
+function increaseMessagesSent(count = 1) {
+  messagesSent += count;
+  updateNotificationElement(chatNotificationElement);
+  setLocalStorageValue(localChatCountKey, messagesSent.toString());
+}
+
+function setLocalStorageValue(key, value) {
+  localStorage.setItem(key, value);
 }
 
 function isValidMessage(message) {

@@ -1,3 +1,4 @@
+const quota = 5;
 const localChatCountKey = "dailyChatCount";
 const localChatResetTimeKey = "dailyChatResetTime";
 const messageCountBadgeId = "messageCountBadge";
@@ -33,13 +34,20 @@ function getChatMessageCount() {
   }
 
   if (currentDate > resetDate) {
-    resetDate.setDate(resetDate.getDate() + 1);
-    localStorage.setItem(localChatResetTimeKey, resetDate.toISOString());
-    localStorage.setItem(localChatCountKey, -5);
-    return -5;
+    const nextResetDate = createNewResetDateFromExistingDate(currentDate);
+    localStorage.setItem(localChatResetTimeKey, nextResetDate.toISOString());
+    localStorage.setItem(localChatCountKey, -quota);
+    return -quota;
   }
 
-  return parseInt(localStorage.getItem(localChatCountKey)) ?? -5;
+  return parseInt(localStorage.getItem(localChatCountKey)) ?? -quota;
+}
+
+function createNewResetDateFromExistingDate(date) {
+  const newResetDate = date;
+  newResetDate.setHours(6, 0, 0, 0);
+  newResetDate.setDate(newResetDate.getDate() + 1);
+  return newResetDate;
 }
 
 function getChatArea() {
