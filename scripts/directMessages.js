@@ -114,6 +114,12 @@ function createDmList() {
   closeDmListButton.classList.add("btn-close-dm-list");
   closeDmListButton.addEventListener("click", closeDmList);
   dmList.appendChild(closeDmListButton);
+  const deleteAllDmsButton = document.createElement("button");
+  deleteAllDmsButton.classList.add("btn-delete-all-dms");
+  deleteAllDmsButton.innerText = "Delete All DMs";
+  deleteAllDmsButton.id = "btn-delete-all-dms";
+  deleteAllDmsButton.addEventListener("click", deleteAllDms);
+  dmList.appendChild(deleteAllDmsButton);
   return dmList;
 }
 
@@ -125,4 +131,13 @@ function openDmList() {
 
 function closeDmList() {
   document.getElementById("dm-list").close();
+}
+
+function deleteAllDms() {
+  const dmContainer = document.getElementById("dm-container");
+  while (dmContainer.childElementCount > 0) {
+    dmContainer.children[0].remove();
+  }
+  numDmsReceived = 0;
+  updateDmBadge();
 }

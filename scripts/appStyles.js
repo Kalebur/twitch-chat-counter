@@ -216,4 +216,17 @@ const appStyles = {
         display: inline-block;
         margin-right: 6px;
     }`,
+  btnDeleteAllDms: `
+      .btn-delete-all-dms {
+        border-radius: 8px;
+        color: white;
+        background-color: darkred;
+        font-size: 1.5rem;
+        position: absolute;
+        bottom: 1vh;
+        right: 8vw;
+        padding: 8px;
+        text-align: center;
+      }
+    `,
 };
