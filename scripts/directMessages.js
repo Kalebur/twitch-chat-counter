@@ -26,7 +26,6 @@ function initializeDmBadge() {
 }
 
 function addMessageToDmList(message) {
-  message.querySelector(`[aria-label="Click to reply"]`).remove();
   const parsedMessage = parseMessageToNewElement(message);
   const dmList = document.getElementById("dm-container");
   const deleteButton = document.createElement("button");
