@@ -1,8 +1,8 @@
 const extensionAudioPlayerId = "extensionAudioPlayer";
 const goalMetAudioLink =
-  "https://cdn.discordapp.com/attachments/1090349167890669578/1317579809647493221/newthingget.mp3?ex=67783fd2&is=6776ee52&hm=22b3542107511928d646f43e001a61e8d412bd229b8fea7fa38ddc88f229e3c6&";
+  "https://github.com/Kalebur/twitch-chat-counter/raw/refs/heads/main/assets/ding1.mp3";
 const goalExceededAudioLink =
-  "https://cdn.discordapp.com/attachments/1090349167890669578/1317588656394997903/eq-ding.mp3?ex=6778480f&is=6776f68f&hm=441ba7c6e76cc84f114edf33fd60cdaaf212012b5b9478616a2fa01aedeae848&";
+  "https://github.com/Kalebur/twitch-chat-counter/raw/refs/heads/main/assets/ding2.mp3";
 
 function injectAudioPlayer() {
   const player = document.createElement("audio");
