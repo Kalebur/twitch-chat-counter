@@ -30,7 +30,10 @@ function addMessageToDmList(message) {
   const dmList = document.getElementById("dm-container");
   const deleteButton = document.createElement("button");
   deleteButton.classList.add("btn-delete-msg");
-  deleteButton.onclick = () => deleteMessage(parsedMessage);
+  deleteButton.onclick = () => {
+    deleteMessage(parsedMessage);
+    closeIfNoDmsLeft();
+  };
   deleteButton.innerText = "X";
   parsedMessage.appendChild(deleteButton);
   dmList.appendChild(parsedMessage);
@@ -139,4 +142,11 @@ function deleteAllDms() {
   }
   numDmsReceived = 0;
   updateDmBadge();
+  closeDmList();
+}
+
+function closeIfNoDmsLeft() {
+  if (numDmsReceived == 0) {
+    closeDmList();
+  }
 }
