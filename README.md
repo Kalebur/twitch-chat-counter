@@ -10,4 +10,4 @@ I watch Twitch a lot, but I rarely ever chat. I wanted to change that, so I set 
 
 ### DM Tracker
 
-Twitch's default notifications when someone sends you a dm in chat, and I wanted something to make that a little more obvious. I added the red background to the messages that I'd seen in other extensions, but that wasn't enough for my needs. I often say something in chat and then turn my attention to another monitor, which makes it very easy to miss replies. So, I added in a DM counter badge and DM list modal that will keep track of any direct chats even if I'm not paying attention to the screen.
+Twitch's default notifications when someone sends you a dm in chat, and I wanted something to make that a little more obvious. I added the red background to the messages that I'd seen in other extensions, but that wasn't enough for my needs. I often say something in chat and then turn my attention to another monitor, which makes it very easy to miss replies. So, I added in a DM counter badge and DM list modal that will keep track of any direct chats even if I'm not paying attention to the screen. No more feeling guilty about missed messages!
