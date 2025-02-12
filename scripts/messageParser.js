@@ -37,13 +37,6 @@ function handleUserMessage(message) {
   if (messagesSent === 0) {
     increaseMessagesSent(quota);
   }
-  clearLatestMessage();
-}
-
-function clearLatestMessage() {
-  setTimeout(() => {
-    latestMessageText = "";
-  }, 100);
 }
 
 function handleDm(dm) {
