@@ -9,9 +9,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 });
 
 chrome.tabs.onActivated.addListener(async (activeInfo) => {
-  console.log(activeInfo);
   const tab = await chrome.tabs.get(activeInfo.tabId);
-  console.log(isStreamChannelUrl(tab.url));
   if (isStreamChannelUrl(tab.url)) {
     chrome.tabs.sendMessage(activeInfo.tabId, "updateCount");
   }

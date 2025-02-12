@@ -15,7 +15,6 @@ function handleMessageReceived(message, sender, sendResponse) {
       return false;
 
     case "newReplyReceivedInNonActiveTab":
-      console.log("Message received!");
       return false;
 
     default:

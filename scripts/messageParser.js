@@ -29,6 +29,17 @@ async function parseNode(node) {
   }
 }
 
+function isValidMessage(message) {
+  return (
+    message !== null &&
+    message !== undefined &&
+    message.querySelector(".chat-line__timestamp") === null &&
+    message.childElementCount > 0 &&
+    message.children[0].hasAttribute("data-a-user") &&
+    message.innerText !== latestMessageText
+  );
+}
+
 function handleUserMessage(message) {
   increaseMessagesSent();
   playSound();
@@ -54,17 +65,6 @@ function increaseMessagesSent(count = 1) {
 
 function setLocalStorageValue(key, value) {
   localStorage.setItem(key, value);
-}
-
-function isValidMessage(message) {
-  return (
-    message !== null &&
-    message !== undefined &&
-    message.querySelector(".chat-line__timestamp") === null &&
-    message.childElementCount > 0 &&
-    message.children[0].hasAttribute("data-a-user") &&
-    message.innerText !== latestMessageText
-  );
 }
 
 function isMessageDirectedAtMonitoredUser(messageNode) {
