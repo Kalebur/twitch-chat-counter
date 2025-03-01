@@ -11,6 +11,16 @@ class MessageParser {
       messageNode.innerText !== latestMessageText
     );
   }
+
+  handleUserMessage(message) {
+    increaseMessagesSent();
+    playSound();
+    displayAchievementForMessageCount(messagesSent);
+    latestMessageText = message.innerText;
+    if (messagesSent === 0) {
+      increaseMessagesSent(quota);
+    }
+  }
 }
 
 const observer = new MutationObserver(messageCallback);
@@ -38,20 +48,10 @@ async function parseNode(node) {
   if (parser.isValidMessage(node)) {
     let user = node.children[0].dataset.aUser;
     if (user === userToMonitor) {
-      handleUserMessage(node);
+      parser.handleUserMessage(node);
     } else if (isMessageDirectedAtMonitoredUser(node)) {
       handleDm(node);
     }
-  }
-}
-
-function handleUserMessage(message) {
-  increaseMessagesSent();
-  playSound();
-  displayAchievementForMessageCount(messagesSent);
-  latestMessageText = message.innerText;
-  if (messagesSent === 0) {
-    increaseMessagesSent(quota);
   }
 }
 
