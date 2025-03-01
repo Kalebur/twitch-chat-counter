@@ -1,5 +1,21 @@
+class MessageParser {
+  constructor() {}
+
+  isValidMessage(messageNode) {
+    return (
+      messageNode !== null &&
+      messageNode !== undefined &&
+      messageNode.querySelector(".chat-line__timestamp") === null &&
+      messageNode.childElementCount > 0 &&
+      messageNode.children[0].hasAttribute("data-a-user") &&
+      messageNode.innerText !== latestMessageText
+    );
+  }
+}
+
 const observer = new MutationObserver(messageCallback);
 const config = { childList: true, subtree: false };
+const parser = new MessageParser();
 
 function initializeObserver(elementToObserve) {
   observer.observe(elementToObserve, config);
@@ -19,7 +35,7 @@ function handleMutation(mutation) {
 }
 
 async function parseNode(node) {
-  if (isValidMessage(node)) {
+  if (parser.isValidMessage(node)) {
     let user = node.children[0].dataset.aUser;
     if (user === userToMonitor) {
       handleUserMessage(node);
@@ -27,17 +43,6 @@ async function parseNode(node) {
       handleDm(node);
     }
   }
-}
-
-function isValidMessage(message) {
-  return (
-    message !== null &&
-    message !== undefined &&
-    message.querySelector(".chat-line__timestamp") === null &&
-    message.childElementCount > 0 &&
-    message.children[0].hasAttribute("data-a-user") &&
-    message.innerText !== latestMessageText
-  );
 }
 
 function handleUserMessage(message) {
