@@ -1,14 +1,16 @@
+const parser = new MessageParser();
+
 initializeExtension();
 
 function initializeExtension() {
   setTimeout(() => {
     if (getChatArea()) {
-      observer.disconnect();
+      parser.observer.disconnect();
       messagesSent = getChatMessageCount();
       injectStyles(appStyles, document.querySelector("head"));
       setMonitoredUser();
       addChatBadgeToPage();
-      initializeObserver(getChatArea());
+      parser.initializeObserver(getChatArea());
       injectAudioPlayer();
       initializeAchievementDisplay();
       initializeDmBadge();

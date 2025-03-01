@@ -1,7 +1,26 @@
 class MessageParser {
   constructor() {
     this.latestMessageText = "";
+    this.observer = new MutationObserver(this.messageCallback);
+    this.config = { childList: true, subtree: false };
   }
+
+  initializeObserver(elementToObserve) {
+    this.observer.observe(elementToObserve, this.config);
+  }
+
+  handleMutation(mutation) {
+    if (mutation.type === "childList") {
+      if (mutation.addedNodes.length === 0) return;
+      this.parseNode(mutation.addedNodes[0]);
+    }
+  }
+
+  messageCallback = (mutationList, observer) => {
+    for (const mutation of mutationList) {
+      this.handleMutation(mutation);
+    }
+  };
 
   async parseNode(node) {
     if (this.isValidMessage(node)) {
@@ -54,26 +73,5 @@ class MessageParser {
 
   isMessageDirectedAtMonitoredUser(messageNode) {
     return messageNode.innerText.toLowerCase().includes(`@${userToMonitor}`);
-  }
-}
-
-const observer = new MutationObserver(messageCallback);
-const config = { childList: true, subtree: false };
-const parser = new MessageParser();
-
-function initializeObserver(elementToObserve) {
-  observer.observe(elementToObserve, config);
-}
-
-function messageCallback(mutationList, observer) {
-  for (const mutation of mutationList) {
-    handleMutation(mutation);
-  }
-}
-
-function handleMutation(mutation) {
-  if (mutation.type === "childList") {
-    if (mutation.addedNodes.length === 0) return;
-    parser.parseNode(mutation.addedNodes[0]);
   }
 }
