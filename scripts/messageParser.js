@@ -3,6 +3,17 @@ class MessageParser {
     this.latestMessageText = "";
   }
 
+  async parseNode(node) {
+    if (this.isValidMessage(node)) {
+      let user = node.children[0].dataset.aUser;
+      if (user === userToMonitor) {
+        this.handleUserMessage(node);
+      } else if (this.isMessageDirectedAtMonitoredUser(node)) {
+        this.handleDm(node);
+      }
+    }
+  }
+
   isValidMessage(messageNode) {
     return (
       messageNode !== null &&
@@ -33,6 +44,17 @@ class MessageParser {
   setLocalStorageValue(key, value) {
     localStorage.setItem(key, value);
   }
+
+  handleDm(dm) {
+    dm.classList.add("msg-highlighted");
+    increaseDmsReceived();
+    updateDmBadge();
+    addMessageToDmList(dm);
+  }
+
+  isMessageDirectedAtMonitoredUser(messageNode) {
+    return messageNode.innerText.toLowerCase().includes(`@${userToMonitor}`);
+  }
 }
 
 const observer = new MutationObserver(messageCallback);
@@ -52,28 +74,6 @@ function messageCallback(mutationList, observer) {
 function handleMutation(mutation) {
   if (mutation.type === "childList") {
     if (mutation.addedNodes.length === 0) return;
-    parseNode(mutation.addedNodes[0]);
+    parser.parseNode(mutation.addedNodes[0]);
   }
-}
-
-async function parseNode(node) {
-  if (parser.isValidMessage(node)) {
-    let user = node.children[0].dataset.aUser;
-    if (user === userToMonitor) {
-      parser.handleUserMessage(node);
-    } else if (isMessageDirectedAtMonitoredUser(node)) {
-      handleDm(node);
-    }
-  }
-}
-
-function handleDm(dm) {
-  dm.classList.add("msg-highlighted");
-  increaseDmsReceived();
-  updateDmBadge();
-  addMessageToDmList(dm);
-}
-
-function isMessageDirectedAtMonitoredUser(messageNode) {
-  return messageNode.innerText.toLowerCase().includes(`@${userToMonitor}`);
 }
