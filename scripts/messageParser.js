@@ -1,5 +1,7 @@
 class MessageParser {
-  constructor() {}
+  constructor() {
+    this.latestMessageText = "";
+  }
 
   isValidMessage(messageNode) {
     return (
@@ -8,18 +10,28 @@ class MessageParser {
       messageNode.querySelector(".chat-line__timestamp") === null &&
       messageNode.childElementCount > 0 &&
       messageNode.children[0].hasAttribute("data-a-user") &&
-      messageNode.innerText !== latestMessageText
+      messageNode.innerText !== this.latestMessageText
     );
   }
 
-  handleUserMessage(message) {
-    increaseMessagesSent();
+  handleUserMessage(messageNode) {
+    this.increaseMessagesSent();
     playSound();
     displayAchievementForMessageCount(messagesSent);
-    latestMessageText = message.innerText;
+    this.latestMessageText = messageNode.innerText;
     if (messagesSent === 0) {
       increaseMessagesSent(quota);
     }
+  }
+
+  increaseMessagesSent(count = 1) {
+    messagesSent += count;
+    updateNotificationElement(chatNotificationElement);
+    this.setLocalStorageValue(localChatCountKey, messagesSent.toString());
+  }
+
+  setLocalStorageValue(key, value) {
+    localStorage.setItem(key, value);
   }
 }
 
@@ -60,16 +72,6 @@ function handleDm(dm) {
   increaseDmsReceived();
   updateDmBadge();
   addMessageToDmList(dm);
-}
-
-function increaseMessagesSent(count = 1) {
-  messagesSent += count;
-  updateNotificationElement(chatNotificationElement);
-  setLocalStorageValue(localChatCountKey, messagesSent.toString());
-}
-
-function setLocalStorageValue(key, value) {
-  localStorage.setItem(key, value);
 }
 
 function isMessageDirectedAtMonitoredUser(messageNode) {

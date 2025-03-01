@@ -7,7 +7,6 @@ const messageMilestones = [0, 10, 25, 50];
 let messagesSent = getChatMessageCount();
 let chatArea = getChatArea();
 let chatNotificationElement = null;
-let latestMessageText = "";
 
 function addChatBadgeToPage() {
   let targetElement = document.querySelector(".chat-input__buttons-container");
