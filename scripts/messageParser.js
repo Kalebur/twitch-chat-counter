@@ -50,7 +50,7 @@ class MessageParser {
     displayAchievementForMessageCount(messagesSent);
     this.latestMessageText = messageNode.innerText;
     if (messagesSent === 0) {
-      increaseMessagesSent(quota);
+      this.increaseMessagesSent(quota);
     }
   }
 
