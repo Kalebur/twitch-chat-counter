@@ -3,6 +3,7 @@ class MessageParser {
     this.latestMessageText = "";
     this.observer = new MutationObserver(this.messageCallback);
     this.config = { childList: true, subtree: false };
+    this.audioPlayer = new AudioPlayer();
   }
 
   initializeObserver(elementToObserve) {
@@ -46,7 +47,7 @@ class MessageParser {
 
   handleUserMessage(messageNode) {
     this.increaseMessagesSent();
-    playSound();
+    this.audioPlayer.playSound();
     displayAchievementForMessageCount(messagesSent);
     this.latestMessageText = messageNode.innerText;
     if (messagesSent === 0) {

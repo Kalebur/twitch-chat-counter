@@ -1,29 +1,35 @@
-const extensionAudioPlayerId = "extensionAudioPlayer";
-const goalMetAudioLink =
-  "https://github.com/Kalebur/twitch-chat-counter/raw/refs/heads/main/assets/ding1.mp3";
-const goalExceededAudioLink =
-  "https://github.com/Kalebur/twitch-chat-counter/raw/refs/heads/main/assets/ding2.mp3";
-
-function injectAudioPlayer() {
-  const player = document.createElement("audio");
-  player.id = extensionAudioPlayerId;
-  player.src = goalMetAudioLink;
-  player.classList.add("extension-audio-player");
-  document.querySelector("body").appendChild(player);
-}
-
-function playSound() {
-  const player = document.querySelector(`#${extensionAudioPlayerId}`);
-  if (player === null) {
-    return;
-  }
-  if (messagesSent === 0) {
-    player.src = goalMetAudioLink;
-  } else if (messagesSent >= 25) {
-    player.src = goalExceededAudioLink;
+class AudioPlayer {
+  constructor() {
+    this.extensionAudioPlayerId = "extensionAudioPlayer";
+    this.goalMetAudioLink =
+      "https://github.com/Kalebur/twitch-chat-counter/raw/refs/heads/main/assets/ding1.mp3";
+    this.goalExceededAudioLink =
+      "https://github.com/Kalebur/twitch-chat-counter/raw/refs/heads/main/assets/ding2.mp3";
+    this.injectAudioPlayer();
   }
 
-  if (messageMilestones.includes(messagesSent)) {
-    player.play();
+  playSound() {
+    const player = document.querySelector(`#${this.extensionAudioPlayerId}`);
+
+    if (player === null) {
+      return;
+    }
+    if (messagesSent === 0) {
+      player.src = this.goalMetAudioLink;
+    } else if (messagesSent >= 25) {
+      player.src = this.goalExceededAudioLink;
+    }
+
+    if (messageMilestones.includes(messagesSent)) {
+      player.play();
+    }
+  }
+
+  injectAudioPlayer() {
+    const player = document.createElement("audio");
+    player.id = this.extensionAudioPlayerId;
+    player.src = this.goalMetAudioLink;
+    player.classList.add("extension-audio-player");
+    document.querySelector("body").appendChild(player);
   }
 }
