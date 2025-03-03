@@ -3,11 +3,13 @@ const parser = new MessageParser();
 initializeExtension();
 
 function initializeExtension() {
+  if (document.querySelectorAll("style").length < 2) {
+    injectStyles(appStyles, document.querySelector("head"));
+  }
   setTimeout(() => {
     if (getChatArea()) {
       parser.observer.disconnect();
       messagesSent = getChatMessageCount();
-      injectStyles(appStyles, document.querySelector("head"));
       setMonitoredUser();
       addChatBadgeToPage();
       parser.initializeObserver(getChatArea());
