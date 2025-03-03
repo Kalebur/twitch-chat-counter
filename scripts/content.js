@@ -11,7 +11,7 @@ function initializeExtension() {
       setMonitoredUser();
       addChatBadgeToPage();
       parser.initializeObserver(getChatArea());
-      initializeAchievementDisplay();
+      parser.achievementHandler.initializeAchievementDisplay();
       initializeDmBadge();
       injectDmList();
     }

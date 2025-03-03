@@ -4,6 +4,7 @@ class MessageParser {
     this.observer = new MutationObserver(this.messageCallback);
     this.config = { childList: true, subtree: false };
     this.audioPlayer = new AudioPlayer();
+    this.achievementHandler = new AchievementHandler();
   }
 
   initializeObserver(elementToObserve) {
