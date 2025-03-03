@@ -49,7 +49,7 @@ class MessageParser {
   handleUserMessage(messageNode) {
     this.increaseMessagesSent();
     this.audioPlayer.playSound();
-    displayAchievementForMessageCount(messagesSent);
+    this.achievementHandler.displayAchievementForMessageCount(messagesSent);
     this.latestMessageText = messageNode.innerText;
     if (messagesSent === 0) {
       this.increaseMessagesSent(quota);

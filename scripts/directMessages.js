@@ -99,7 +99,7 @@ function deleteMessage(message) {
 
 function injectDmList() {
   const dmList = createDmList();
-  injectElementIntoPage(dmList);
+  document.querySelector("body").appendChild(dmList);
 }
 
 function createDmList() {
