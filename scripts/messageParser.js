@@ -1,10 +1,10 @@
 class MessageParser {
-  constructor() {
+  constructor(audioPlayer, achievementHandler) {
     this.latestMessageText = "";
     this.observer = new MutationObserver(this.messageCallback);
     this.config = { childList: true, subtree: false };
-    this.audioPlayer = new AudioPlayer();
-    this.achievementHandler = new AchievementHandler();
+    this.audioPlayer = audioPlayer;
+    this.achievementHandler = achievementHandler;
   }
 
   initializeObserver(elementToObserve) {

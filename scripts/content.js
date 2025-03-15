@@ -1,4 +1,6 @@
-const parser = new MessageParser();
+const audioPlayer = new AudioPlayer();
+const achievementHandler = new AchievementHandler();
+const parser = new MessageParser(audioPlayer, achievementHandler);
 
 initializeExtension();
 
