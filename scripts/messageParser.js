@@ -65,6 +65,19 @@ class MessageParser {
 
   updateChannelCount() {
     const channel = this.getCurrentChannelName();
+    const channelSummary =
+      JSON.parse(localStorage.getItem("dailyChatSummary")) || {};
+    if (!channelSummary[channel]) {
+      channelSummary[channel] = 1;
+    } else {
+      channelSummary[channel] += 1;
+    }
+
+    this.setLocalStorageValue(
+      "dailyChatSummary",
+      JSON.stringify(channelSummary)
+    );
+    console.log(channelSummary);
   }
 
   getCurrentChannelName() {
