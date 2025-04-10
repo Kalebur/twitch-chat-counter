@@ -37,7 +37,11 @@ function getChatMessageCount() {
     const nextResetDate = createNewResetDateFromExistingDate(currentDate);
     localStorage.setItem(localChatResetTimeKey, nextResetDate.toISOString());
     localStorage.setItem(localChatCountKey, -quota);
-    localStorage.setItem("dailyChatSummary", {});
+    localStorage.setItem(
+      "previousDailyChatSummary",
+      localStorage.getItem("dailyChatSummary") || JSON.stringify({})
+    );
+    localStorage.setItem("dailyChatSummary", JSON.stringify({}));
     return -quota;
   }
 
