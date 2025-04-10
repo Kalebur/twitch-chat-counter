@@ -54,12 +54,22 @@ class MessageParser {
     if (messagesSent === 0) {
       this.increaseMessagesSent(quota);
     }
+    this.updateChannelCount();
   }
 
   increaseMessagesSent(count = 1) {
     messagesSent += count;
     updateNotificationElement(chatNotificationElement);
     this.setLocalStorageValue(localChatCountKey, messagesSent.toString());
+  }
+
+  updateChannelCount() {
+    const channel = this.getCurrentChannelName();
+  }
+
+  getCurrentChannelName() {
+    const channelUrl = location.href;
+    return channelUrl.slice(channelUrl.lastIndexOf("/") + 1);
   }
 
   setLocalStorageValue(key, value) {
