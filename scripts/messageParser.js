@@ -82,7 +82,12 @@ class MessageParser {
 
   getCurrentChannelName() {
     const channelUrl = location.href;
-    return channelUrl.slice(channelUrl.lastIndexOf("/") + 1);
+    const dividerIndex = channelUrl.lastIndexOf("/");
+    if (channelUrl.includes("?")) {
+      const queryIndex = channelUrl.indexOf("?");
+      return channelUrl.slice(dividerIndex + 1, queryIndex);
+    }
+    return channelUrl.slice(dividerIndex + 1);
   }
 
   setLocalStorageValue(key, value) {
