@@ -77,7 +77,6 @@ class MessageParser {
       "dailyChatSummary",
       JSON.stringify(channelSummary)
     );
-    console.log(channelSummary);
   }
 
   getCurrentChannelName() {

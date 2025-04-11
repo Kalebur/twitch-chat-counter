@@ -30,3 +30,7 @@ function isStreamChannelUrl(url) {
   }
   return false;
 }
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  console.log(`In background: ${message}`);
+});
