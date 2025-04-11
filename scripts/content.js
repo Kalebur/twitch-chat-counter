@@ -25,6 +25,6 @@ function initializeExtension() {
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "loadSummary") {
     const summary = JSON.parse(localStorage.getItem("dailyChatSummary"));
-    sendResponse(JSON.stringify(summary));
+    sendResponse(summary);
   }
 });

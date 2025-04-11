@@ -3,3 +3,18 @@ body {
   background-color: #222;
   color: #eee;
 }
+
+li {
+  list-style-type: none;
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+  margin: 0 auto 5px auto;
+  font-size: 1.2rem;
+  padding: 8px;
+  border: 1px solid black;
+}
+
+li:nth-child(odd) {
+  background-color: #33f;
+}
