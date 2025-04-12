@@ -1,20 +1,24 @@
 async function populateFields() {
-  const testField = document.getElementById("testField");
-  const dailySummary = document.getElementById("dailySummary");
   await chrome.tabs.query(
     { active: true, currentWindow: true },
     async (tabs) => {
       const activeTab = tabs[0];
       if (activeTab.url.includes("twitch.tv")) {
+        const dailySummaryElement = document.getElementById("dailySummary");
+        const totalElement = document.getElementById("total");
         const summary = await chrome.tabs.sendMessage(activeTab.id, {
           action: "loadSummary",
         });
         const channelItems = await createChannelItems(summary);
         for (const channel of channelItems) {
-          dailySummary.appendChild(channel);
+          dailySummaryElement.appendChild(channel);
         }
+        totalElement.innerText = `Total Message: ${await getDailyTotal(
+          summary
+        )}`;
       } else {
-        testField.innerText =
+        const statusMessage = document.getElementById("statusMessage");
+        statusMessage.innerText =
           "Summary unavailable outside of Twitch. Please navigate to a Twitch page and try again.";
       }
     }
@@ -37,6 +41,15 @@ const createChannelItems = async (summary) => {
   }
 
   return items;
+};
+
+const getDailyTotal = async (summary) => {
+  let total = 0;
+  for (const channel in summary) {
+    total += summary[channel];
+  }
+
+  return total;
 };
 
 window.addEventListener("DOMContentLoaded", async () => {

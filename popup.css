@@ -18,3 +18,7 @@ li {
 li:nth-child(odd) {
   background-color: #33f;
 }
+
+h2 {
+  text-align: right;
+}
