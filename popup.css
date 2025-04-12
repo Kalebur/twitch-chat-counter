@@ -16,9 +16,13 @@ li {
 }
 
 li:nth-child(odd) {
-  background-color: #33f;
+  background-color: #9147ff;
 }
 
 h2 {
   text-align: right;
+}
+
+#statusMessage {
+  font-size: 1rem;
 }
