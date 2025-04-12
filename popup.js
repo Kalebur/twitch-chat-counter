@@ -8,7 +8,7 @@ async function renderSummaries() {
         const summary = await chrome.tabs.sendMessage(activeTab.id, {
           action: "loadSummary",
         });
-        const dailySummary = await createSummary("Daily", summary);
+        const dailySummary = await createSummary("Today's", summary.today);
         summariesContainer.appendChild(dailySummary);
       } else {
         const statusMessage = document.getElementById("statusMessage");
