@@ -1,21 +1,15 @@
-async function populateFields() {
+async function renderSummaries() {
   await chrome.tabs.query(
     { active: true, currentWindow: true },
     async (tabs) => {
       const activeTab = tabs[0];
       if (activeTab.url.includes("twitch.tv")) {
-        const dailySummaryElement = document.getElementById("dailySummary");
-        const totalElement = document.getElementById("total");
+        const summariesContainer = document.getElementById("summaries");
         const summary = await chrome.tabs.sendMessage(activeTab.id, {
           action: "loadSummary",
         });
-        const channelItems = await createChannelItems(summary);
-        for (const channel of channelItems) {
-          dailySummaryElement.appendChild(channel);
-        }
-        totalElement.innerText = `Total Messages: ${await getDailyTotal(
-          summary
-        )}`;
+        const dailySummary = await createSummary("Daily", summary);
+        summariesContainer.appendChild(dailySummary);
       } else {
         const statusMessage = document.getElementById("statusMessage");
         statusMessage.innerText =
@@ -24,6 +18,28 @@ async function populateFields() {
     }
   );
 }
+
+const createSummary = async (summaryName, summaryData) => {
+  const summarySection = document.createElement("section");
+  const summaryTitle = document.createElement("h1");
+  const summaryList = document.createElement("ul");
+  summaryTitle.innerText = `${summaryName} Summary`;
+
+  const summaryItems = await createChannelItems(summaryData);
+  for (const item of summaryItems) {
+    summaryList.appendChild(item);
+  }
+  const totalElement = document.createElement("h2");
+  totalElement.innerText = `Total Messages: ${await getTotalMessages(
+    summaryData
+  )}`;
+
+  summarySection.appendChild(summaryTitle);
+  summarySection.appendChild(summaryList);
+  summarySection.appendChild(totalElement);
+
+  return summarySection;
+};
 
 const createChannelItems = async (summary) => {
   const items = [];
@@ -43,7 +59,7 @@ const createChannelItems = async (summary) => {
   return items;
 };
 
-const getDailyTotal = async (summary) => {
+const getTotalMessages = async (summary) => {
   let total = 0;
   for (const channel in summary) {
     total += summary[channel];
@@ -53,5 +69,5 @@ const getDailyTotal = async (summary) => {
 };
 
 window.addEventListener("DOMContentLoaded", async () => {
-  await populateFields();
+  await renderSummaries();
 });
