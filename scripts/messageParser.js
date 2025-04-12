@@ -80,13 +80,18 @@ class MessageParser {
   }
 
   getCurrentChannelName() {
-    const channelUrl = location.href;
-    const dividerIndex = channelUrl.lastIndexOf("/");
-    if (channelUrl.includes("?")) {
-      const queryIndex = channelUrl.indexOf("?");
-      return channelUrl.slice(dividerIndex + 1, queryIndex);
+    const channelTitleElement = document.querySelector("h1.tw-title");
+    if (channelTitleElement) {
+      return channelTitleElement.innerText;
+    } else {
+      const channelUrl = location.href;
+      const dividerIndex = channelUrl.lastIndexOf("/");
+      if (channelUrl.includes("?")) {
+        const queryIndex = channelUrl.indexOf("?");
+        return channelUrl.slice(dividerIndex + 1, queryIndex);
+      }
+      return channelUrl.slice(dividerIndex + 1);
     }
-    return channelUrl.slice(dividerIndex + 1);
   }
 
   setLocalStorageValue(key, value) {

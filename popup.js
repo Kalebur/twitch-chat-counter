@@ -13,7 +13,7 @@ async function populateFields() {
         for (const channel of channelItems) {
           dailySummaryElement.appendChild(channel);
         }
-        totalElement.innerText = `Total Message: ${await getDailyTotal(
+        totalElement.innerText = `Total Messages: ${await getDailyTotal(
           summary
         )}`;
       } else {
