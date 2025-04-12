@@ -10,6 +10,11 @@ async function renderSummaries() {
         });
         const dailySummary = await createSummary("Today's", summary.today);
         summariesContainer.appendChild(dailySummary);
+        const yesterdaySummary = await createSummary(
+          "Yesterday's",
+          summary.yesterday
+        );
+        summariesContainer.appendChild(yesterdaySummary);
       } else {
         const statusMessage = document.getElementById("statusMessage");
         statusMessage.innerText =
