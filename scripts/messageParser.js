@@ -73,9 +73,21 @@ class MessageParser {
       channelSummary[channel] += 1;
     }
 
+    const weeklySummary =
+      JSON.parse(localStorage.getItem("weeklyChatSummary")) || {};
+    if (!weeklySummary[channel]) {
+      weeklySummary[channel] = 1;
+    } else {
+      weeklySummary[channel] += 1;
+    }
+
     this.setLocalStorageValue(
       "dailyChatSummary",
       JSON.stringify(channelSummary)
+    );
+    this.setLocalStorageValue(
+      "weeklyChatSummary",
+      JSON.stringify(weeklySummary)
     );
   }
 

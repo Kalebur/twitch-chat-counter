@@ -34,7 +34,9 @@ function getChatMessageCount() {
   }
 
   if (currentDate > resetDate) {
-    updateWeeklySummary();
+    if (currentDate.getDay() === 1) {
+      updatePreviousWeekSummary();
+    }
     const nextResetDate = createNewResetDateFromExistingDate(currentDate);
     localStorage.setItem(localChatResetTimeKey, nextResetDate.toISOString());
     localStorage.setItem(localChatCountKey, -quota);
@@ -50,21 +52,15 @@ function getChatMessageCount() {
   return parseInt(localStorage.getItem(localChatCountKey)) ?? -quota;
 }
 
-function updateWeeklySummary() {
-  const dailySummary = JSON.parse(
-    localStorage.getItem("dailyChatSummary") || "{}"
-  );
+function updatePreviousWeekSummary() {
   const weeklySummary = JSON.parse(
     localStorage.getItem("weeklyChatSummary") || "{}"
   );
-  for (const channel in dailySummary) {
-    if (channel in weeklySummary) {
-      weeklySummary[channel] += dailySummary[channel];
-    } else {
-      weeklySummary[channel] = dailySummary[channel];
-    }
-  }
-  localStorage.setItem("weeklyChatSummary", JSON.stringify(weeklySummary));
+  localStorage.setItem(
+    "previousWeeklyChatSummary",
+    JSON.stringify(weeklySummary)
+  );
+  localStorage.setItem("weeklyChatSummary", JSON.stringify({}));
 }
 
 function createNewResetDateFromExistingDate(date) {
