@@ -25,11 +25,18 @@ function initializeExtension() {
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "loadSummary") {
     const summary = {};
-    summary["today"] = JSON.parse(localStorage.getItem("dailyChatSummary"));
-    summary["yesterday"] = JSON.parse(
-      localStorage.getItem("previousDailyChatSummary")
+    summary["today"] = JSON.parse(
+      localStorage.getItem("dailyChatSummary") || "{}"
     );
-    summary["week"] = JSON.parse(localStorage.getItem("weeklyChatSummary"));
+    summary["yesterday"] = JSON.parse(
+      localStorage.getItem("previousDailyChatSummary") || "{}"
+    );
+    summary["week"] = JSON.parse(
+      localStorage.getItem("weeklyChatSummary") || "{}"
+    );
+    summary["lastWeek"] = JSON.parse(
+      localStorage.getItem("previousWeeklyChatSummary") || "{}"
+    );
     sendResponse(summary);
   }
 });

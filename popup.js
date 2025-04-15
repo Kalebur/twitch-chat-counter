@@ -17,6 +17,11 @@ async function renderSummaries() {
         summariesContainer.appendChild(yesterdaySummary);
         const weeklySummary = await createSummary("This Week", summary.week);
         summariesContainer.appendChild(weeklySummary);
+        const lastWeekSummary = await createSummary(
+          "Last Week",
+          summary.lastWeek
+        );
+        summariesContainer.appendChild(lastWeekSummary);
       } else {
         const statusMessage = document.getElementById("statusMessage");
         statusMessage.innerText =
