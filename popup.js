@@ -8,14 +8,14 @@ async function renderSummaries() {
         const summary = await chrome.tabs.sendMessage(activeTab.id, {
           action: "loadSummary",
         });
-        const dailySummary = await createSummary("Today's", summary.today);
+        const dailySummary = await createSummary("Today", summary.today);
         summariesContainer.appendChild(dailySummary);
         const yesterdaySummary = await createSummary(
-          "Yesterday's",
+          "Yesterday",
           summary.yesterday
         );
         summariesContainer.appendChild(yesterdaySummary);
-        const weeklySummary = await createSummary("Weekly", summary.week);
+        const weeklySummary = await createSummary("This Week", summary.week);
         summariesContainer.appendChild(weeklySummary);
       } else {
         const statusMessage = document.getElementById("statusMessage");
@@ -30,7 +30,7 @@ const createSummary = async (summaryName, summaryData) => {
   const summarySection = document.createElement("section");
   const summaryTitle = document.createElement("h1");
   const summaryList = document.createElement("ul");
-  summaryTitle.innerText = `${summaryName} Summary`;
+  summaryTitle.innerText = `${summaryName}`;
 
   const summaryItems = await createChannelItems(summaryData);
   for (const item of summaryItems) {
