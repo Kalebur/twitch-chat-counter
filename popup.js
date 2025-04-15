@@ -15,6 +15,8 @@ async function renderSummaries() {
           summary.yesterday
         );
         summariesContainer.appendChild(yesterdaySummary);
+        const weeklySummary = await createSummary("Weekly", summary.week);
+        summariesContainer.appendChild(weeklySummary);
       } else {
         const statusMessage = document.getElementById("statusMessage");
         statusMessage.innerText =

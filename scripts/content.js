@@ -29,6 +29,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     summary["yesterday"] = JSON.parse(
       localStorage.getItem("previousDailyChatSummary")
     );
+    summary["week"] = JSON.parse(localStorage.getItem("weeklyChatSummary"));
     sendResponse(summary);
   }
 });
