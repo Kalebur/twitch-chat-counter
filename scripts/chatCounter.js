@@ -1,4 +1,4 @@
-const quota = 5;
+const quota = parseInt(localStorage.getItem("dailyChatQuota")) || 5;
 const localChatCountKey = "dailyChatCount";
 const localChatResetTimeKey = "dailyChatResetTime";
 const messageCountBadgeId = "messageCountBadge";

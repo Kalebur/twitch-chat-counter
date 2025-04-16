@@ -11,6 +11,7 @@ function initializeExtension() {
   setTimeout(() => {
     if (getChatArea()) {
       parser.observer.disconnect();
+      initializeLocalStorageValues();
       messagesSent = getChatMessageCount();
       setMonitoredUser();
       addChatBadgeToPage();
@@ -20,6 +21,33 @@ function initializeExtension() {
       injectDmList();
     }
   }, 1000);
+}
+
+function initializeLocalStorageValues() {
+  localStorage.setItem(
+    "dailyChatQuota",
+    localStorage.getItem("dailyChatQuota") ?? 5
+  );
+  localStorage.setItem(
+    "dailyChatResetTime",
+    localStorage.getItem("dailyChatResetTime") ?? new Date().toISOString()
+  );
+  localStorage.setItem(
+    "dailyChatSummary",
+    localStorage.getItem("dailyChatSummary") ?? JSON.stringify({})
+  );
+  localStorage.setItem(
+    "previousDailyChatSummary",
+    localStorage.getItem("previousDailyChatSummary") ?? JSON.stringify({})
+  );
+  localStorage.setItem(
+    "weeklyChatSummary",
+    localStorage.getItem("weeklyChatSummary") ?? JSON.stringify({})
+  );
+  localStorage.setItem(
+    "previousWeeklyChatSummary",
+    localStorage.getItem("previousWeeklyChatSummary") ?? JSON.stringify({})
+  );
 }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
