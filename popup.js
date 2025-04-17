@@ -81,5 +81,35 @@ const getTotalMessages = async (summary) => {
 };
 
 window.addEventListener("DOMContentLoaded", async () => {
+  const summaryTab = document.getElementById("summary");
+  const settingsTab = document.getElementById("settings");
+  summaryTab.addEventListener("click", (e) => {
+    showSection(e, "Summary");
+  });
+  settingsTab.addEventListener("click", (e) => {
+    showSection(e, "Settings");
+  });
+
   await renderSummaries();
 });
+
+const showSection = (e, section) => {
+  const tabs = document.querySelectorAll(".tab");
+  const sections = document.querySelectorAll(".popup-section");
+
+  for (const tab of tabs) {
+    tab.classList.remove("active");
+  }
+  for (const section of sections) {
+    section.classList.add("hidden");
+  }
+
+  e.target.classList.add("active");
+  const targetSection = e.target.innerText;
+
+  if (targetSection === "Summary") {
+    sections[0].classList.remove("hidden");
+  } else {
+    sections[1].classList.remove("hidden");
+  }
+};

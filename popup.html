@@ -7,8 +7,24 @@
     <link rel="stylesheet" href="popup.css" />
   </head>
   <body>
-    <main id="summaries">
-      <p id="statusMessage"></p>
+    <main>
+      <div class="tabs">
+        <button id="summary" class="tab active">Summary</button>
+        <button id="settings" class="tab">Settings</button>
+      </div>
+      <section id="summaries" class="popup-section">
+        <p id="statusMessage"></p>
+      </section>
+      <section id="settings" class="popup-section hidden">
+        <p class="input-group">
+          <label for="twitchHandle">Twitch Handle</label>
+          <input type="text" id="twitchHandle" name="twitchHandle" />
+        </p>
+        <p class="input-group">
+          <label for="dailyQuota">Daily Quota</label>
+          <input type="number" id="dailyQuota" name="dailyQuota" min="1" />
+        </p>
+      </section>
     </main>
     <script src="popup.js"></script>
   </body>

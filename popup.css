@@ -1,3 +1,7 @@
+:root {
+  --purple: #9147ff;
+}
+
 body {
   width: 400px;
   background-color: #222;
@@ -16,7 +20,7 @@ li {
 }
 
 li:nth-child(odd) {
-  background-color: #9147ff;
+  background-color: var(--purple);
 }
 
 h2,
@@ -26,4 +30,43 @@ h3 {
 
 #statusMessage {
   font-size: 1rem;
+}
+
+div.tabs {
+  width: 100%;
+  display: flex;
+}
+
+button {
+  border: none;
+  background-color: transparent;
+  color: white;
+  padding: 8px;
+  width: 50%;
+  text-align: center;
+  display: inline-block;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+button.active {
+  background-color: var(--purple);
+  font-weight: bold;
+}
+
+p.input-group label {
+  width: 33%;
+  display: inline-block;
+  font-size: 1rem;
+}
+
+p.input-group input {
+  display: inline-block;
+  width: 62%;
+  font-size: 1rem;
+  padding: 4px;
+}
+
+.hidden {
+  display: none;
 }
