@@ -1,35 +1,26 @@
-async function renderSummaries() {
-  await chrome.tabs.query(
-    { active: true, currentWindow: true },
-    async (tabs) => {
-      const activeTab = tabs[0];
-      if (activeTab.url.includes("twitch.tv")) {
-        const summariesContainer = document.getElementById("summaries");
-        const summary = await chrome.tabs.sendMessage(activeTab.id, {
-          action: "loadSummary",
-        });
-        const dailySummary = await createSummary("Today", summary.today);
-        summariesContainer.appendChild(dailySummary);
-        const yesterdaySummary = await createSummary(
-          "Yesterday",
-          summary.yesterday
-        );
-        summariesContainer.appendChild(yesterdaySummary);
-        const weeklySummary = await createSummary("This Week", summary.week);
-        summariesContainer.appendChild(weeklySummary);
-        const lastWeekSummary = await createSummary(
-          "Last Week",
-          summary.lastWeek
-        );
-        summariesContainer.appendChild(lastWeekSummary);
-      } else {
-        const statusMessage = document.getElementById("statusMessage");
-        statusMessage.innerText =
-          "Summary unavailable outside of Twitch. Please navigate to a Twitch page and try again.";
-      }
-    }
-  );
-}
+const renderSummaries = async (activeTab) => {
+  if (activeTab.url.includes("twitch.tv")) {
+    const summariesContainer = document.getElementById("summaries");
+    const summary = await chrome.tabs.sendMessage(activeTab.id, {
+      action: "loadSummary",
+    });
+    const dailySummary = await createSummary("Today", summary.today);
+    summariesContainer.appendChild(dailySummary);
+    const yesterdaySummary = await createSummary(
+      "Yesterday",
+      summary.yesterday
+    );
+    summariesContainer.appendChild(yesterdaySummary);
+    const weeklySummary = await createSummary("This Week", summary.week);
+    summariesContainer.appendChild(weeklySummary);
+    const lastWeekSummary = await createSummary("Last Week", summary.lastWeek);
+    summariesContainer.appendChild(lastWeekSummary);
+  } else {
+    const statusMessage = document.getElementById("statusMessage");
+    statusMessage.innerText =
+      "Summary unavailable outside of Twitch. Please navigate to a Twitch page and try again.";
+  }
+};
 
 const createSummary = async (summaryName, summaryData) => {
   const summarySection = document.createElement("section");
@@ -81,19 +72,23 @@ const getTotalMessages = async (summary) => {
 };
 
 window.addEventListener("DOMContentLoaded", async () => {
-  const summaryTab = document.getElementById("summary");
-  const settingsTab = document.getElementById("settings");
-  summaryTab.addEventListener("click", (e) => {
-    showSection(e, "Summary");
+  const [activeTab] = await chrome.tabs.query({
+    active: true,
+    currentWindow: true,
   });
-  settingsTab.addEventListener("click", (e) => {
-    showSection(e, "Settings");
+  const summaryHtmlTab = document.getElementById("summary");
+  const settingsHtmlTab = document.getElementById("settings");
+  summaryHtmlTab.addEventListener("click", async (e) => {
+    await showSection(e, activeTab);
+  });
+  settingsHtmlTab.addEventListener("click", async (e) => {
+    await showSection(e, activeTab);
   });
 
-  await renderSummaries();
+  await renderSummaries(activeTab);
 });
 
-const showSection = (e, section) => {
+const showSection = async (e, activeTab) => {
   const tabs = document.querySelectorAll(".tab");
   const sections = document.querySelectorAll(".popup-section");
 
@@ -111,5 +106,16 @@ const showSection = (e, section) => {
     sections[0].classList.remove("hidden");
   } else {
     sections[1].classList.remove("hidden");
+    const settingsData = await chrome.tabs.sendMessage(activeTab.id, {
+      action: "loadSettings",
+    });
+    populateSettings(settingsData);
   }
+};
+
+const populateSettings = (settingsData) => {
+  const usernameInput = document.getElementById("twitchHandle");
+  usernameInput.value = settingsData.username;
+  const quotaInput = document.getElementById("dailyQuota");
+  quotaInput.value = settingsData.dailyQuota;
 };

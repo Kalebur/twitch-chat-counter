@@ -52,19 +52,34 @@ function initializeLocalStorageValues() {
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "loadSummary") {
-    const summary = {};
-    summary["today"] = JSON.parse(
-      localStorage.getItem("dailyChatSummary") || "{}"
-    );
-    summary["yesterday"] = JSON.parse(
-      localStorage.getItem("previousDailyChatSummary") || "{}"
-    );
-    summary["week"] = JSON.parse(
-      localStorage.getItem("weeklyChatSummary") || "{}"
-    );
-    summary["lastWeek"] = JSON.parse(
-      localStorage.getItem("previousWeeklyChatSummary") || "{}"
-    );
+    const summary = createSummary();
     sendResponse(summary);
+  } else if (message.action === "loadSettings") {
+    const settings = loadSettings();
+    sendResponse(settings);
   }
 });
+
+function createSummary() {
+  const result = {};
+  result["today"] = JSON.parse(
+    localStorage.getItem("dailyChatSummary") || "{}"
+  );
+  result["yesterday"] = JSON.parse(
+    localStorage.getItem("previousDailyChatSummary") || "{}"
+  );
+  result["week"] = JSON.parse(
+    localStorage.getItem("weeklyChatSummary") || "{}"
+  );
+  result["lastWeek"] = JSON.parse(
+    localStorage.getItem("previousWeeklyChatSummary") || "{}"
+  );
+  return result;
+}
+
+function loadSettings() {
+  const result = {};
+  result.username = localStorage.getItem("userToMonitor");
+  result.dailyQuota = localStorage.getItem("dailyChatQuota");
+  return result;
+}
