@@ -57,6 +57,15 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   } else if (message.action === "loadSettings") {
     const settings = loadSettings();
     sendResponse(settings);
+  } else if (message.action === "updateSettings") {
+    console.log(message.settings);
+    updateSettings(message.settings);
+    setMonitoredUser(message.settings.username);
+    const messageCountBadge = document.getElementById("messageCountBadge");
+    if (messageCountBadge) {
+      quota = parseInt(localStorage.getItem("dailyChatQuota"));
+      updateNotificationElement(messageCountBadge);
+    }
   }
 });
 
@@ -82,4 +91,21 @@ function loadSettings() {
   result.username = localStorage.getItem("userToMonitor");
   result.dailyQuota = localStorage.getItem("dailyChatQuota");
   return result;
+}
+
+function updateSettings(newSettings) {
+  localStorage.setItem("userToMonitor", newSettings.username.toLowerCase());
+  localStorage.setItem("dailyChatQuota", newSettings.dailyQuota || 1);
+}
+
+function updateSentMessagesCount(targetQuota) {
+  // const sentMessages = parseInt(localStorage.getItem("dailyChatCount"));
+  // if (sentMessages < targetQuota && sentMessages > -1) {
+  //   localStorage.setItem("dailyChatCount", sentMessages);
+  // } else if (
+  //   sentMessages < targetQuota &&
+  //   Math.abs(sentMessages) >= targetQuota
+  // ) {
+  //   localStorage.setItem("dailyChatCount", Math.abs(sentMessages));
+  // }
 }

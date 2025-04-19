@@ -1,3 +1,5 @@
+let settings = {};
+
 const renderSummaries = async (activeTab) => {
   if (activeTab.url.includes("twitch.tv")) {
     const summariesContainer = document.getElementById("summaries");
@@ -78,11 +80,19 @@ window.addEventListener("DOMContentLoaded", async () => {
   });
   const summaryHtmlTab = document.getElementById("summary");
   const settingsHtmlTab = document.getElementById("settings");
+  const twitchHandleInput = document.getElementById("twitchHandle");
+  const quotaInput = document.getElementById("dailyQuota");
   summaryHtmlTab.addEventListener("click", async (e) => {
     await showSection(e, activeTab);
   });
   settingsHtmlTab.addEventListener("click", async (e) => {
     await showSection(e, activeTab);
+  });
+  twitchHandleInput.addEventListener("input", (e) => {
+    handleInput(e, activeTab);
+  });
+  quotaInput.addEventListener("input", (e) => {
+    handleInput(e, activeTab);
   });
 
   await renderSummaries(activeTab);
@@ -109,6 +119,7 @@ const showSection = async (e, activeTab) => {
     const settingsData = await chrome.tabs.sendMessage(activeTab.id, {
       action: "loadSettings",
     });
+    settings = settingsData;
     populateSettings(settingsData);
   }
 };
@@ -118,4 +129,20 @@ const populateSettings = (settingsData) => {
   usernameInput.value = settingsData.username;
   const quotaInput = document.getElementById("dailyQuota");
   quotaInput.value = settingsData.dailyQuota;
+};
+
+const handleInput = (event, activeTab) => {
+  const newSettings = Object.assign({}, settings);
+  if (event.target.getAttribute("name") === "twitchHandle") {
+    newSettings.username = event.target.value;
+  } else if (event.target.getAttribute("name") === "dailyQuota") {
+    if (parseInt(event.target.value) < 1) {
+      event.target.value = 1;
+    }
+    newSettings.dailyQuota = event.target.value;
+  }
+  chrome.tabs.sendMessage(activeTab.id, {
+    action: "updateSettings",
+    settings: newSettings,
+  });
 };

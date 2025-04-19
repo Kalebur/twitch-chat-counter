@@ -1,9 +1,9 @@
-const quota = parseInt(localStorage.getItem("dailyChatQuota")) || 5;
 const localChatCountKey = "dailyChatCount";
 const localChatResetTimeKey = "dailyChatResetTime";
 const messageCountBadgeId = "messageCountBadge";
 const messageMilestones = [0, 10, 25, 50];
 
+let quota = parseInt(localStorage.getItem("dailyChatQuota")) || 5;
 let messagesSent = getChatMessageCount();
 let chatArea = getChatArea();
 let chatNotificationElement = null;
@@ -39,14 +39,14 @@ function getChatMessageCount() {
     }
     const nextResetDate = createNewResetDateFromExistingDate(currentDate);
     localStorage.setItem(localChatResetTimeKey, nextResetDate.toISOString());
-    localStorage.setItem(localChatCountKey, -quota);
+    localStorage.setItem(localChatCountKey, 0);
 
     localStorage.setItem(
       "previousDailyChatSummary",
       localStorage.getItem("dailyChatSummary") || JSON.stringify({})
     );
     localStorage.setItem("dailyChatSummary", JSON.stringify({}));
-    return -quota;
+    return 0;
   }
 
   return parseInt(localStorage.getItem(localChatCountKey)) ?? -quota;
@@ -75,7 +75,7 @@ function getChatArea() {
 }
 
 function updateNotificationElement(element) {
-  element.innerText = messagesSent;
+  element.innerText = calculateQuotaDifference();
   element.classList.remove("quota-not-met", "quota-met", "quota-exceeded");
   element.classList.add(getNotificationStyle());
 }
@@ -87,15 +87,22 @@ function createNotificationElement() {
     "default-cursor",
     getNotificationStyle()
   );
-  element.innerText = messagesSent;
+  element.innerText = calculateQuotaDifference();
   element.id = messageCountBadgeId;
   return element;
 }
 
+function calculateQuotaDifference() {
+  if (messagesSent < quota) {
+    return -(quota - messagesSent);
+  }
+  return messagesSent;
+}
+
 function getNotificationStyle() {
-  if (messagesSent >= 25) {
+  if (messagesSent >= quota * 2) {
     return "quota-exceeded";
-  } else if (messagesSent >= 0 && messagesSent < 25) {
+  } else if (messagesSent >= quota && messagesSent < quota * 2) {
     return "quota-met";
   } else {
     return "quota-not-met";
