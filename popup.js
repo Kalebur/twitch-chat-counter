@@ -89,6 +89,14 @@ const populateAchievements = (settingsData) => {
       createAchievementField(achievement, title, body)
     );
   }
+
+  const addButton = document.createElement("button");
+  addButton.classList.add("add-button");
+  addButton.innerText = "Add New Achievement";
+  addButton.addEventListener("click", (e) => {
+    e.target.parentNode.insertBefore(createAchievementField(), e.target);
+  });
+  achievementList.appendChild(addButton);
 };
 
 const createAchievementField = (
