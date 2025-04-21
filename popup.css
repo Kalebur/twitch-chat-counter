@@ -70,3 +70,9 @@ p.input-group input {
 .hidden {
   display: none;
 }
+
+a,
+a:visited {
+  text-decoration: none;
+  color: #bd91ff;
+}

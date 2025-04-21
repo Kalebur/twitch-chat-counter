@@ -78,6 +78,14 @@ window.addEventListener("DOMContentLoaded", async () => {
     active: true,
     currentWindow: true,
   });
+
+  if (!activeTab.url.includes("https://www.twitch.tv")) {
+    const statusMessage = document.getElementById("statusMessage");
+    statusMessage.innerHTML =
+      "Extension functionality unavailable outside of Twitch. Please navigate to a <a href='https://www.twitch.tv/' target='__blank' rel='noreferrer'>Twitch</a> page and try again.";
+    return;
+  }
+  displayExtensionBody();
   const summaryHtmlTab = document.getElementById("summary");
   const settingsHtmlTab = document.getElementById("settings");
   const twitchHandleInput = document.getElementById("twitchHandle");
@@ -97,6 +105,10 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   await renderSummaries(activeTab);
 });
+
+const displayExtensionBody = () => {
+  document.getElementById("extension-body").classList.remove("hidden");
+};
 
 const showSection = async (e, activeTab) => {
   const tabs = document.querySelectorAll(".tab");
