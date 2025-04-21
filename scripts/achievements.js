@@ -85,4 +85,12 @@ class AchievementHandler {
       achievementElement.classList.remove("animate");
     }, animationDuration * 1000);
   }
+
+  set achievements(achievements) {
+    this.milestoneAchievements = achievements;
+  }
+
+  get achievements() {
+    return this.milestoneAchievements;
+  }
 }

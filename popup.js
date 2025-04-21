@@ -77,6 +77,55 @@ const populateSettings = (settingsData) => {
   usernameInput.value = settingsData.username;
   const quotaInput = document.getElementById("dailyQuota");
   quotaInput.value = settingsData.dailyQuota;
+  populateAchievements(settingsData);
+};
+
+const populateAchievements = (settingsData) => {
+  const achievementList = document.getElementById("achievements");
+  achievementList.innerHTML = "";
+  for (const achievement in settingsData.achievements) {
+    const { title, body } = settingsData.achievements[achievement];
+    achievementList.appendChild(
+      createAchievementField(achievement, title, body)
+    );
+  }
+};
+
+const createAchievementField = (
+  milestoneCount = -1,
+  title = "A New Achievement",
+  body = "Congrats! You achieved something!"
+) => {
+  const fieldGroup = document.createElement("li");
+  fieldGroup.classList.add("input-group");
+  const milestoneLabel = document.createElement("label");
+  milestoneLabel.innerText = "Chat Count";
+  const milestoneField = document.createElement("input");
+  milestoneField.setAttribute("type", "number");
+  milestoneField.setAttribute("min", "0");
+  milestoneField.value = milestoneCount;
+  milestoneLabel.appendChild(milestoneField);
+
+  const titleLabel = document.createElement("label");
+  titleLabel.innerText = "Title";
+  const titleField = document.createElement("input");
+  titleField.value = title;
+  titleLabel.appendChild(titleField);
+
+  const bodyLabel = document.createElement("label");
+  bodyLabel.innerText = "Body";
+  const bodyField = document.createElement("textarea");
+  bodyField.value = body;
+  bodyLabel.appendChild(bodyField);
+
+  fieldGroup.appendChild(milestoneLabel);
+  fieldGroup.appendChild(milestoneField);
+  fieldGroup.appendChild(titleLabel);
+  fieldGroup.appendChild(titleField);
+  fieldGroup.appendChild(bodyLabel);
+  fieldGroup.appendChild(bodyField);
+
+  return fieldGroup;
 };
 
 const handleInput = (event, activeTab) => {

@@ -19,8 +19,14 @@ li {
   border: 1px solid black;
 }
 
-li:nth-child(odd) {
+#summaries li:nth-child(odd) {
   background-color: var(--purple);
+}
+
+#achievements li {
+  display: inline-block;
+  width: 95%;
+  margin: 0 auto;
 }
 
 h2,
@@ -54,17 +60,22 @@ button.active {
   font-weight: bold;
 }
 
-p.input-group label {
+.input-group label {
   width: 33%;
   display: inline-block;
   font-size: 1rem;
 }
 
-p.input-group input {
+.input-group input,
+.input-group textarea {
   display: inline-block;
   width: 62%;
   font-size: 1rem;
   padding: 4px;
+}
+
+.input-group textarea {
+  resize: none;
 }
 
 .hidden {
@@ -75,4 +86,8 @@ a,
 a:visited {
   text-decoration: none;
   color: #bd91ff;
+}
+
+.text-left {
+  text-align: left;
 }

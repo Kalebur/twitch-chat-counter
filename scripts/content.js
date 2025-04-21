@@ -48,6 +48,10 @@ function initializeLocalStorageValues() {
     "previousWeeklyChatSummary",
     localStorage.getItem("previousWeeklyChatSummary") ?? JSON.stringify({})
   );
+  localStorage.setItem(
+    "achievements",
+    localStorage.getItem("achievements") ?? JSON.stringify({})
+  );
 }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -58,7 +62,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     const settings = loadSettings();
     sendResponse(settings);
   } else if (message.action === "updateSettings") {
-    console.log(message.settings);
     updateSettings(message.settings);
     setMonitoredUser(message.settings.username);
     const messageCountBadge = document.getElementById("messageCountBadge");
@@ -90,12 +93,14 @@ function loadSettings() {
   const result = {};
   result.username = localStorage.getItem("userToMonitor");
   result.dailyQuota = localStorage.getItem("dailyChatQuota");
+  result.achievements = JSON.parse(localStorage.getItem("achievements"));
   return result;
 }
 
 function updateSettings(newSettings) {
   localStorage.setItem("userToMonitor", newSettings.username.toLowerCase());
-  localStorage.setItem("dailyChatQuota", newSettings.dailyQuota || 1);
+  localStorage.setItem("dailyChatQuota", newSettings.dailyQuota);
+  localStorage.setItem("achievements", newSettings.achievements);
 }
 
 function updateSentMessagesCount(targetQuota) {
