@@ -125,6 +125,14 @@ const createAchievementField = (
   fieldGroup.appendChild(bodyLabel);
   fieldGroup.appendChild(bodyField);
 
+  const removeButton = document.createElement("button");
+  removeButton.classList.add("remove-btn");
+  removeButton.innerText = "Remove";
+  fieldGroup.appendChild(removeButton);
+  removeButton.addEventListener("click", (e) => {
+    e.target.parentNode.remove();
+  });
+
   return fieldGroup;
 };
 
