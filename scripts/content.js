@@ -50,7 +50,25 @@ function initializeLocalStorageValues() {
   );
   localStorage.setItem(
     "achievements",
-    localStorage.getItem("achievements") ?? JSON.stringify({})
+    localStorage.getItem("achievements") ??
+      JSON.stringify({
+        0: {
+          title: "Quota Met",
+          body: "Congrats! You met your daily chat quota!",
+        },
+        10: {
+          title: "Getting Chattier",
+          body: "Look at you, chatting like a pro!",
+        },
+        25: {
+          title: "Actual Chatterbox",
+          body: "You're getting your name out there now! Good on you!",
+        },
+        50: {
+          title: "Lord Spam-A-Lot",
+          body: "You've sent 50 messages today! That's a whole lot of talking! Keep it up!",
+        },
+      })
   );
 }
 
@@ -100,7 +118,10 @@ function loadSettings() {
 function updateSettings(newSettings) {
   localStorage.setItem("userToMonitor", newSettings.username.toLowerCase());
   localStorage.setItem("dailyChatQuota", newSettings.dailyQuota);
-  localStorage.setItem("achievements", newSettings.achievements);
+  localStorage.setItem(
+    "achievements",
+    JSON.stringify(newSettings.achievements)
+  );
 }
 
 function updateSentMessagesCount(targetQuota) {

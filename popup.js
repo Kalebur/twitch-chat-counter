@@ -68,25 +68,25 @@ const showSection = async (e, activeTab) => {
       action: "loadSettings",
     });
     settings = settingsData;
-    populateSettings(settingsData);
+    populateSettings(settingsData, activeTab);
   }
 };
 
-const populateSettings = (settingsData) => {
+const populateSettings = (settingsData, activeTab) => {
   const usernameInput = document.getElementById("twitchHandle");
   usernameInput.value = settingsData.username;
   const quotaInput = document.getElementById("dailyQuota");
   quotaInput.value = settingsData.dailyQuota;
-  populateAchievements(settingsData);
+  populateAchievements(settingsData, activeTab);
 };
 
-const populateAchievements = (settingsData) => {
+const populateAchievements = (settingsData, activeTab) => {
   const achievementList = document.getElementById("achievements");
   achievementList.innerHTML = "";
   for (const achievement in settingsData.achievements) {
     const { title, body } = settingsData.achievements[achievement];
     achievementList.appendChild(
-      createAchievementField(achievement, title, body)
+      createAchievementField(activeTab, achievement, title, body)
     );
   }
 
@@ -94,12 +94,16 @@ const populateAchievements = (settingsData) => {
   addButton.classList.add("add-button");
   addButton.innerText = "Add New Achievement";
   addButton.addEventListener("click", (e) => {
-    e.target.parentNode.insertBefore(createAchievementField(), e.target);
+    e.target.parentNode.insertBefore(
+      createAchievementField(activeTab),
+      e.target
+    );
   });
   achievementList.appendChild(addButton);
 };
 
 const createAchievementField = (
+  activeTab,
   milestoneCount = -1,
   title = "A New Achievement",
   body = "Congrats! You achieved something!"
@@ -138,6 +142,7 @@ const createAchievementField = (
   removeButton.innerText = "Remove";
   fieldGroup.appendChild(removeButton);
   removeButton.addEventListener("click", (e) => {
+    handleInput(e, activeTab);
     e.target.parentNode.remove();
   });
 
@@ -153,11 +158,15 @@ const handleInput = (event, activeTab) => {
       event.target.value = 1;
     }
     newSettings.dailyQuota = event.target.value;
+  } else if (event.target.classList.contains("remove-btn")) {
+    const key = parseInt(event.target.parentNode.querySelector("input").value);
+    delete newSettings.achievements[key];
   }
   chrome.tabs.sendMessage(activeTab.id, {
     action: "updateSettings",
     settings: newSettings,
   });
+  settings = Object.assign({}, newSettings);
 };
 
 const renderSummaries = async (activeTab) => {
