@@ -52,7 +52,7 @@ function initializeLocalStorageValues() {
     "achievements",
     localStorage.getItem("achievements") ??
       JSON.stringify({
-        0: {
+        5: {
           title: "Quota Met",
           body: "Congrats! You met your daily chat quota!",
         },
@@ -122,16 +122,4 @@ function updateSettings(newSettings) {
     "achievements",
     JSON.stringify(newSettings.achievements)
   );
-}
-
-function updateSentMessagesCount(targetQuota) {
-  // const sentMessages = parseInt(localStorage.getItem("dailyChatCount"));
-  // if (sentMessages < targetQuota && sentMessages > -1) {
-  //   localStorage.setItem("dailyChatCount", sentMessages);
-  // } else if (
-  //   sentMessages < targetQuota &&
-  //   Math.abs(sentMessages) >= targetQuota
-  // ) {
-  //   localStorage.setItem("dailyChatCount", Math.abs(sentMessages));
-  // }
 }
