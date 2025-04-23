@@ -94,10 +94,21 @@ const populateAchievements = (settingsData, activeTab) => {
   addButton.classList.add("add-button");
   addButton.innerText = "Add New Achievement";
   addButton.addEventListener("click", (e) => {
+    if (settings.achievements[-1]) {
+      return;
+    }
+    settings.achievements[-1] = {
+      title: "A New Achievement",
+      body: "Congrats! You achieved something!",
+    };
     e.target.parentNode.insertBefore(
       createAchievementField(activeTab),
       e.target
     );
+    chrome.tabs.sendMessage(activeTab.id, {
+      action: "updateSettings",
+      settings,
+    });
   });
   achievementList.appendChild(addButton);
 };
