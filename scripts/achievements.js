@@ -1,7 +1,7 @@
 class AchievementHandler {
   constructor() {
     this.milestoneAchievements = {
-      0: {
+      5: {
         title: "Quota Met",
         body: "Congrats! You met your daily chat quota!",
       },
@@ -58,10 +58,7 @@ class AchievementHandler {
   }
 
   displayAchievementForMessageCount(count) {
-    if (
-      messageMilestones.includes(count) &&
-      this.milestoneAchievements.hasOwnProperty(count)
-    ) {
+    if (count in this.milestoneAchievements) {
       this.setAchievementTitle(this.milestoneAchievements[count].title);
       this.setAchievementBody(this.milestoneAchievements[count].body);
       this.playAchievementAnimation();
