@@ -1,6 +1,7 @@
 const audioPlayer = new AudioPlayer();
 const achievementHandler = new AchievementHandler();
 const parser = new MessageParser(audioPlayer, achievementHandler);
+let badgeCheckInterval = null;
 
 initializeExtension();
 
@@ -21,6 +22,11 @@ function initializeExtension() {
       injectDmList();
     }
   }, 1000);
+  badgeCheckInterval = setInterval(() => {
+    if (document.getElementById("messageCountBadge") === null) {
+      initializeExtension();
+    }
+  }, 5000);
 }
 
 function initializeLocalStorageValues() {
