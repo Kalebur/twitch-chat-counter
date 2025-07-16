@@ -26,7 +26,7 @@ class MessageParser {
 
   async parseNode(node) {
     if (this.isValidMessage(node)) {
-      let user = node.children[0].dataset.aUser;
+      let user = node.children[0].children[0].dataset.aUser;
       if (user === userToMonitor) {
         this.handleUserMessage(node);
       } else if (this.isMessageDirectedAtMonitoredUser(node)) {
@@ -41,7 +41,8 @@ class MessageParser {
       messageNode !== undefined &&
       messageNode.querySelector(".chat-line__timestamp") === null &&
       messageNode.childElementCount > 0 &&
-      messageNode.children[0].hasAttribute("data-a-user") &&
+      messageNode.children[0].childElementCount > 0 &&
+      messageNode.children[0].children[0].hasAttribute("data-a-user") &&
       messageNode.innerText !== this.latestMessageText
     );
   }
