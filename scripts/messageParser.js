@@ -1,6 +1,8 @@
 class MessageParser {
   constructor(audioPlayer, achievementHandler) {
     this.latestMessageText = "";
+    this.latestMessageTime = 0;
+    this.latestMessageNode = null;
     this.observer = new MutationObserver(this.messageCallback);
     this.config = { childList: true, subtree: false };
     this.audioPlayer = audioPlayer;
@@ -26,8 +28,9 @@ class MessageParser {
 
   async parseNode(node) {
     if (this.isValidMessage(node)) {
-      let user = node.children[0].dataset.aUser;
+      let user = node.querySelector("[data-a-user]").dataset.aUser;
       if (user === userToMonitor) {
+        this.latestMessageNode = node;
         this.handleUserMessage(node);
       } else if (this.isMessageDirectedAtMonitoredUser(node)) {
         this.handleDm(node);
@@ -36,18 +39,16 @@ class MessageParser {
   }
 
   isValidMessage(messageNode) {
-    return (
-      messageNode !== null &&
-      messageNode !== undefined &&
-      messageNode.querySelector(".chat-line__timestamp") === null &&
-      messageNode.childElementCount > 0 &&
-      messageNode.children[0].childElementCount > 0 &&
-      messageNode.children[0].hasAttribute("data-a-user") &&
-      messageNode.innerText !== this.latestMessageText
-    );
+    if (messageNode === null || messageNode === undefined) return false;
+    if (messageNode.querySelector(".chat-line__timestamp") !== null)
+      return false;
+    if (messageNode.childElementCount < 1) return false;
+    if (messageNode.querySelector("[data-a-user]") === null) return false;
+    return messageNode.innerText !== this.latestMessageText;
   }
 
   handleUserMessage(messageNode) {
+    this.latestMessageTime = new Date();
     this.increaseMessagesSent();
     this.audioPlayer.playSound();
     this.achievementHandler.displayAchievementForMessageCount(messagesSent);
